@@ -79,6 +79,7 @@ dependencies {
     //Room
     implementation 'androidx.room:room-ktx:2.5.1'
     implementation 'androidx.room:room-runtime:2.5.1'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
 //    kapt 'androidx.room:room-compiler:2.5.1'
 
     testImplementation 'junit:junit:4.13.2'
