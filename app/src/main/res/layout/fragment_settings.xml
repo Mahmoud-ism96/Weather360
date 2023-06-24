@@ -1,14 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <ImageView
+        android:id="@+id/iv_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:backgroundTint="#00FFFFFF"
+        android:backgroundTintMode="add"
+        android:src="@drawable/settings"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_fragment_name"
+        app:layout_constraintEnd_toStartOf="@+id/tv_settings_fragment_name"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_fragment_name" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tv_settings_fragment_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/menu_settings"
+        android:textColor="#000000"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_anchorGravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iv_settings"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="16dp" />
+
+    <View
+        android:id="@+id/settings_location_click"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="-8dp"
+        android:layout_marginBottom="-8dp"
+        android:background="@drawable/settings_ripple"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_location_value"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_location_title"
+        android:focusable="true" />
+
+    <View
+        android:id="@+id/settings_temp_click"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="-8dp"
+        android:layout_marginBottom="-8dp"
+        android:background="@drawable/settings_ripple"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_temp_value"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_temp_title"
+        app:layout_constraintVertical_bias="1.0"
+        android:focusable="true" />
+
+    <View
+        android:id="@+id/settings_speed_click"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="-8dp"
+        android:layout_marginBottom="-8dp"
+        android:background="@drawable/settings_ripple"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_speed_value"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_speed_title"
+        app:layout_constraintVertical_bias="1.0"
+        android:focusable="true" />
+
+    <View
+        android:id="@+id/settings_lang_click"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="-8dp"
+        android:layout_marginBottom="-8dp"
+        android:background="@drawable/settings_ripple"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_lang_value"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_lang_title"
+        app:layout_constraintVertical_bias="1.0"
+        android:focusable="true" />
+
+    <TextView
+        android:id="@+id/tv_settings_location_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="32dp"
+        android:text="Location"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/iv_settings_location"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_fragment_name" />
+
+    <TextView
+        android:id="@+id/tv_settings_location_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Map"
+        android:textColor="#99000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_settings_location_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_location_title" />
+
+    <ImageView
+        android:id="@+id/iv_settings_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_location_on_black_24"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_location_value"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_location_title" />
+
+
+    <ImageView
+        android:id="@+id/iv_settings_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_thermostat_black_24"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_temp_value"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_temp_title" />
+
+    <TextView
+        android:id="@+id/tv_settings_temp_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kelvin"
+        android:textColor="#99000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_settings_temp_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_temp_title" />
+
+    <TextView
+        android:id="@+id/tv_settings_temp_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:text="Temperature Unit"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/iv_settings_temp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_location_value" />
+
+    <TextView
+        android:id="@+id/tv_settings_speed_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:text="Wind Speed Unit"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/iv_settings_wind"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_temp_value" />
+
+    <ImageView
+        android:id="@+id/iv_settings_wind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_air_black_24"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_speed_value"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_speed_title" />
+
+    <TextView
+        android:id="@+id/tv_settings_speed_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Meter/sec"
+        android:textColor="#99000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_settings_speed_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_speed_title" />
+
+    <TextView
+        android:id="@+id/tv_settings_lang_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:text="Language"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/iv_settings_lang"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_speed_value" />
+
+    <ImageView
+        android:id="@+id/iv_settings_lang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_language_black_24"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_settings_lang_value"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/tv_settings_lang_title" />
+
+    <TextView
+        android:id="@+id/tv_settings_lang_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="English"
+        android:textColor="#99000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_settings_lang_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_settings_lang_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

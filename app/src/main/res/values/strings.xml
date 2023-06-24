@@ -14,5 +14,21 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Settings -->
+    <string name="location">Location</string>
+    <string name="map">Map</string>
+    <string name="gps">GPS</string>
+    <string name="temperature">Temperature</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="celsius">Celsius</string>
+    <string name="meter_sec">meter/sec</string>
+    <string name="miles_hour">miles/hour</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="wind_speed_unit">Wind Speed Unit</string>
+    <string name="language">Language</string>
 
 </resources>
