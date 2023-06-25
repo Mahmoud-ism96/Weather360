@@ -70,7 +70,6 @@ class SettingsFragment : Fragment() {
     private fun initOnClick() {
         binding.settingsLocationClick.setOnClickListener {
             dialogBuilder(
-                requireView(),
                 getString(R.string.location),
                 R.drawable.outline_location_on_black_24,
                 listLocation,
@@ -84,7 +83,6 @@ class SettingsFragment : Fragment() {
 
         binding.settingsTempClick.setOnClickListener {
             dialogBuilder(
-                requireView(),
                 getString(R.string.temperature),
                 R.drawable.outline_thermostat_black_24,
                 listTemperatureUnit,
@@ -97,7 +95,6 @@ class SettingsFragment : Fragment() {
 
         binding.settingsSpeedClick.setOnClickListener {
             dialogBuilder(
-                requireView(),
                 getString(R.string.wind_speed_unit),
                 R.drawable.outline_air_black_24,
                 listWindSpeed,
@@ -110,7 +107,6 @@ class SettingsFragment : Fragment() {
 
         binding.settingsLangClick.setOnClickListener {
             dialogBuilder(
-                requireView(),
                 getString(R.string.language),
                 R.drawable.outline_language_black_24,
                 listLanguage,
@@ -129,14 +125,13 @@ class SettingsFragment : Fragment() {
     }
 
     private fun dialogBuilder(
-        view: View,
         title: String,
         icon: Int,
         stringList: List<String>,
         selected: String,
         onItemSelected: (String) -> Unit
     ) {
-        val builder = MaterialAlertDialogBuilder(view.context)
+        val builder = MaterialAlertDialogBuilder(requireView().context)
         builder.setIcon(icon)
         builder.setTitle(title)
         builder.setSingleChoiceItems(

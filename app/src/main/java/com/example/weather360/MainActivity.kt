@@ -36,22 +36,6 @@ class MainActivity : AppCompatActivity() {
         )
 
         navView.setupWithNavController(navController)
-
-//        binding.navView.setNavigationItemSelectedListener { menuItem ->
-//            when (menuItem.itemId) {
-//                R.id.nav_home -> {
-//                    binding.appBarMain.tvFragmentName.text = "Home"
-//                }
-//                R.id.nav_gallery -> {
-//                    binding.appBarMain.tvFragmentName.text = "Gallery"
-//                }
-//                R.id.nav_slideshow -> {
-//                    binding.appBarMain.tvFragmentName.text = "Slideshow"
-//                }
-//            }
-//            drawerLayout.closeDrawer(GravityCompat.START)
-//            true
-//        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
