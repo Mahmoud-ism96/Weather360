@@ -34,7 +34,7 @@
         app:layout_constraintGuide_end="16dp" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/tv_weekly_item_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Mon"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <TextView
-        android:id="@+id/textView17"
+        android:id="@+id/tv_weekly_item_feels_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="/20°C"
@@ -56,36 +56,36 @@
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <TextView
-        android:id="@+id/textView23"
+        android:id="@+id/tv_weekly_item_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="23"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline8"
-        app:layout_constraintEnd_toStartOf="@+id/textView17"
+        app:layout_constraintEnd_toStartOf="@+id/tv_weekly_item_feels_like"
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/iv_weekly_item_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline8"
-        app:layout_constraintEnd_toStartOf="@+id/textView24"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toStartOf="@+id/tv_weekly_item_state"
+        app:layout_constraintHorizontal_bias="0.45"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/textView13"
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
         app:layout_constraintTop_toTopOf="@+id/guideline7"
         app:srcCompat="@drawable/cloud" />
 
     <TextView
-        android:id="@+id/textView24"
+        android:id="@+id/tv_weekly_item_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Thunderstorm"
         app:layout_constraintBottom_toTopOf="@+id/guideline8"
-        app:layout_constraintEnd_toStartOf="@+id/textView23"
+        app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageView5"
-        app:layout_constraintTop_toTopOf="@+id/guideline7" />
+        app:layout_constraintStart_toEndOf="@+id/iv_weekly_item_icon"
+        app:layout_constraintTop_toTopOf="@+id/guideline7"
+        tools:text="Thunderstorm" />
 </androidx.constraintlayout.widget.ConstraintLayout>

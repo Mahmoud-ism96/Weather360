@@ -49,52 +49,52 @@
         app:lottie_rawRes="@raw/weather_night" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/tv_weekly_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:includeFontPadding="false"
-        tools:text="20"
-        android:textSize="84sp"
+        android:textSize="60sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/lottie_weekly"
         app:layout_constraintStart_toEndOf="@+id/lottie_weekly"
-        app:layout_constraintTop_toTopOf="@+id/lottie_weekly" />
+        app:layout_constraintTop_toTopOf="@+id/lottie_weekly"
+        tools:text="20" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/tv_weekly_feels_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="17dp"
+        android:layout_marginBottom="14dp"
         android:textColor="#80000000"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView7"
-        app:layout_constraintStart_toEndOf="@+id/textView7"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_weekly_temp"
+        app:layout_constraintStart_toEndOf="@+id/tv_weekly_temp"
         tools:text="/23° C" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/tv_weekly_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Thunderclouds"
         android:textColor="#80000000"
-        app:layout_constraintStart_toStartOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintStart_toStartOf="@+id/tv_weekly_temp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_weekly_temp"
+        tools:text="Thunderclouds" />
 
     <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Tomorrow"
+        android:text="@string/tomorrow"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView7"
-        app:layout_constraintStart_toStartOf="@+id/textView7" />
+        app:layout_constraintBottom_toTopOf="@+id/tv_weekly_temp"
+        app:layout_constraintStart_toStartOf="@+id/tv_weekly_temp" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_weekly_wind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         android:layout_marginTop="16dp"
         app:cardCornerRadius="25dp"
         app:cardElevation="5dp"
@@ -105,7 +105,7 @@
         app:layout_constraintTop_toBottomOf="@+id/lottie_weekly">
 
         <LinearLayout
-            android:layout_width="100dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
@@ -119,6 +119,7 @@
                 android:src="@drawable/wind" />
 
             <TextView
+                android:id="@+id/tv_weekly_wind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -128,7 +129,7 @@
                 android:id="@+id/textView18"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Wind"
+                android:text="@string/wind"
                 android:textColor="#80000000"
                 android:textSize="12sp" />
 
@@ -140,7 +141,7 @@
         android:id="@+id/cv_weekly_humidity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         app:cardCornerRadius="25dp"
         app:cardElevation="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/cv_weekly_wind"
@@ -150,7 +151,7 @@
         app:layout_constraintTop_toTopOf="@+id/cv_weekly_wind">
 
         <LinearLayout
-            android:layout_width="100dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
@@ -164,6 +165,7 @@
                 android:src="@drawable/droplet" />
 
             <TextView
+                android:id="@+id/tv_weekly_humidity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
@@ -173,7 +175,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Humidity"
+                android:text="@string/humidity"
                 android:textColor="#80000000"
                 android:textSize="12sp" />
 
@@ -185,7 +187,7 @@
         android:id="@+id/materialCardView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         app:cardCornerRadius="25dp"
         app:cardElevation="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/cv_weekly_humidity"
@@ -195,7 +197,7 @@
         app:layout_constraintTop_toTopOf="@+id/cv_weekly_humidity">
 
         <LinearLayout
-            android:layout_width="100dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
@@ -209,6 +211,7 @@
                 android:src="@drawable/cloud" />
 
             <TextView
+                android:id="@+id/tv_weekly_clouds"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -218,18 +221,19 @@
                 android:id="@+id/textView19"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Cloud"
+                android:text="@string/cloud"
                 android:textColor="#80000000"
                 android:textSize="12sp" />
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_weekly"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
+        android:nestedScrollingEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cv_weekly_humidity"

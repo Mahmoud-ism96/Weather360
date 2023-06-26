@@ -35,5 +35,9 @@
         android:id="@+id/weeklyFragment"
         android:name="com.example.weather360.ui.weekly.WeeklyFragment"
         android:label="WeeklyFragment"
-        tools:layout="@layout/fragment_weekly"/>
+        tools:layout="@layout/fragment_weekly">
+        <argument
+            android:name="forecast"
+            app:argType="com.example.weather360.model.Forecast" />
+    </fragment>
 </navigation>
