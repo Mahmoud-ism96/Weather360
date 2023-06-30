@@ -10,43 +10,38 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.weather360.R
-import com.example.weather360.databinding.HourlyItemBinding
 import com.example.weather360.databinding.WeeklyItemBinding
 import com.example.weather360.model.Daily
-import com.example.weather360.model.Hourly
 import com.example.weather360.util.CommonUtils.Companion.getDayOfWeek
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class WeeklyAdapter(private val context: Context) :
-    ListAdapter<Daily, WeeklyAdapter.ProductViewHolder>(ProductDiffUtil()) {
+    ListAdapter<Daily, WeeklyAdapter.WeeklyViewHolder>(ProductDiffUtil()) {
 
     private lateinit var binding: WeeklyItemBinding
 
-    class ProductViewHolder(var binding: WeeklyItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class WeeklyViewHolder(var binding: WeeklyItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeeklyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         binding = WeeklyItemBinding.inflate(inflater, parent, false)
-        return ProductViewHolder(binding)
+        return WeeklyViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
-        val currentProduct = getItem(position)
+    override fun onBindViewHolder(holder: WeeklyViewHolder, position: Int) {
+        val currentItem = getItem(position)
         holder.binding.apply {
-            Log.i("TAG", "onBindViewHolder: $currentProduct")
-            tvWeeklyItemTemp.text = "${currentProduct.temp.day.toInt()}"
-            tvWeeklyItemFeelsLike.text = "/${currentProduct.feels_like.day.toInt()} F"
+            Log.i("TAG", "onBindViewHolder: $currentItem")
+            tvWeeklyItemTemp.text = "${currentItem.temp.day.toInt()}"
+            tvWeeklyItemFeelsLike.text = "/${currentItem.feels_like.day.toInt()} F"
 
-            val description = currentProduct.weather[0].description
+            val description = currentItem.weather[0].description
             val capitalizedDescription =
                 description.split(" ").joinToString(" ") { it.capitalize() }
 
             tvWeeklyItemState.text = capitalizedDescription
-            tvWeeklyItemDay.text = "${getDayOfWeek(currentProduct.dt.toLong())}"
+            tvWeeklyItemDay.text = "${getDayOfWeek(currentItem.dt.toLong())}"
             Glide.with(context)
-                .load("https://openweathermap.org/img/wn/${currentProduct.weather[0].icon}.png")
+                .load("https://openweathermap.org/img/wn/${currentItem.weather[0].icon}.png")
                 .apply(RequestOptions().override(200, 200))
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground).into(ivWeeklyItemIcon)

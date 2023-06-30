@@ -9,17 +9,29 @@
         android:id="@+id/nav_home"
         android:name="com.example.weather360.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_nav_home_to_weeklyFragment"
             app:destination="@id/weeklyFragment" />
+        <argument
+            android:name="favLocation"
+            app:argType="com.example.weather360.model.FavoriteLocation"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
     <fragment
         android:id="@+id/nav_favorite"
         android:name="com.example.weather360.ui.favorite.FavoriteFragment"
         android:label="@string/menu_favorite"
-        tools:layout="@layout/fragment_favorite" />
+        tools:layout="@layout/fragment_favorite">
+        <action
+            android:id="@+id/action_nav_favorite_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+        <action
+            android:id="@+id/action_nav_favorite_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_alert"
@@ -40,4 +52,9 @@
             android:name="forecast"
             app:argType="com.example.weather360.model.Forecast" />
     </fragment>
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.weather360.ui.map.MapsFragment"
+        android:label="MapsFragment"
+        tools:layout="@layout/fragment_maps" />
 </navigation>

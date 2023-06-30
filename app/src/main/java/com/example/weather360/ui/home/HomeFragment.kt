@@ -13,10 +13,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather360.databinding.FragmentHomeBinding
+import com.example.weather360.db.ConcreteLocalSource
+import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Forecast
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
 import com.example.weather360.network.ApiStatus
+import com.example.weather360.ui.weekly.WeeklyFragmentArgs
 import com.example.weather360.util.CommonUtils.Companion.capitalizeWords
 import com.example.weather360.util.CommonUtils.Companion.fromUnixToString
 import kotlinx.coroutines.launch
@@ -34,6 +37,8 @@ class HomeFragment : Fragment() {
     private lateinit var _viewModel: HomeViewModel
     private lateinit var recyclerAdapter: HomeAdapter
 
+    private var favLocation : FavoriteLocation? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -42,11 +47,21 @@ class HomeFragment : Fragment() {
 
         val _viewModelFactory = HomeViewModelFactory(
             Repository.getInstance(
-                ApiClient
+                ApiClient, ConcreteLocalSource.getInstance(requireContext())
             )
         )
 
         _viewModel = ViewModelProvider(this, _viewModelFactory)[HomeViewModel::class.java]
+
+        if(favLocation != null)
+            Log.i("TAG", "onCreateView: $favLocation")
+
+        favLocation = HomeFragmentArgs.fromBundle(requireArguments()).favLocation
+
+//        if (favLocation) {
+//
+//            Log.i("TAG", "onCreateView: $favLocation")
+//        }
 
         recyclerAdapter = HomeAdapter(requireContext())
 
@@ -70,7 +85,6 @@ class HomeFragment : Fragment() {
                             findNavController().navigate(navigationAction)
                         }
 
-//                        binding.progressBar.isVisible = false
                         recyclerAdapter.submitList(it.forecast.hourly)
                     }
 
@@ -102,7 +116,6 @@ class HomeFragment : Fragment() {
 
         }
     }
-
 
 
     override fun onDestroyView() {

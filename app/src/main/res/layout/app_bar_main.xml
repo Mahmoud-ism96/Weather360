@@ -26,5 +26,7 @@
         android:backgroundTint="#00FFFFFF"
         android:backgroundTintMode="add"
         android:padding="4dp"
-        android:src="@drawable/menu_grid2" />
+        android:src="@drawable/menu_grid2"
+        app:layout_anchor="@id/nav_host_fragment_content_main"
+        app:layout_anchorGravity="top|start" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

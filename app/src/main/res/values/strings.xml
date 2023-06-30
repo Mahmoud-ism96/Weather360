@@ -35,5 +35,6 @@
     <string name="wind">Wind</string>
     <string name="humidity">Humidity</string>
     <string name="cloud">Cloud</string>
+    <string name="save_location">Save Location</string>
 
 </resources>

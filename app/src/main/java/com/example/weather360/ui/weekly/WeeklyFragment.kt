@@ -52,11 +52,12 @@ class WeeklyFragment : Fragment() {
             overScrollMode = View.OVER_SCROLL_NEVER
         }
 
+
         val mutableList = forecast.daily.toMutableList()
         mutableList.removeAt(0)
-        forecast.daily = mutableList
+        mutableList.removeAt(mutableList.size-1)
 
-        recyclerAdapter.submitList(forecast.daily)
+        recyclerAdapter.submitList(mutableList)
 
         return root
     }
