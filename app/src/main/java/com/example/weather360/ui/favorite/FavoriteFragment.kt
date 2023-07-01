@@ -2,13 +2,11 @@ package com.example.weather360.ui.favorite
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,13 +16,7 @@ import com.example.weather360.db.ConcreteLocalSource
 import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
-import com.example.weather360.network.ApiStatus
-import com.example.weather360.ui.home.HomeAdapter
-import com.example.weather360.ui.home.HomeFragmentDirections
-import com.example.weather360.ui.home.HomeViewModel
-import com.example.weather360.ui.home.HomeViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.launch
 
 class FavoriteFragment : Fragment() {
 

@@ -14,9 +14,9 @@ object ApiClient : RemoteSource {
     private val retrofitService = retrofit.create(ApiInterface::class.java)
 
 
-    override fun getForecast(): Flow<Forecast> = flow {
+    override fun getForecast(latitude: Double, longitude: Double): Flow<Forecast> = flow {
         val request = retrofitService.getWeather(
-            30.013190, 31.426615, "en", "0d5916207f9ba5c980b88f81bbece1ea"
+            latitude, longitude, "en", "0d5916207f9ba5c980b88f81bbece1ea"
         )
         if (request.isSuccessful) {
             emit(request.body()!!)

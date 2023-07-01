@@ -4,5 +4,5 @@ import com.example.weather360.model.Forecast
 import kotlinx.coroutines.flow.Flow
 
 interface RemoteSource {
-    fun getForecast(): Flow<Forecast>
+    fun getForecast(latitude: Double, longitude: Double): Flow<Forecast>
 }

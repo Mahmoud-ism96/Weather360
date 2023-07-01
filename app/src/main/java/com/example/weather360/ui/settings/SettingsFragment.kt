@@ -1,5 +1,7 @@
 package com.example.weather360.ui.settings
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +9,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentSettingsBinding
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LANGUAGE
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LOCATION
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_TEMP_UNIT
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_WIND_SPEED
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
@@ -23,6 +29,8 @@ class SettingsFragment : Fragment() {
     private lateinit var listWindSpeed: List<String>
     private lateinit var listLanguage: List<String>
 
+    private lateinit var sharedPref: SharedPreferences
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -34,10 +42,11 @@ class SettingsFragment : Fragment() {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
+
         init()
 
         initOnClick()
-
 
         return root
     }
@@ -45,11 +54,11 @@ class SettingsFragment : Fragment() {
 
     private fun init() {
         listLocation = listOf(
-            getString(R.string.map), getString(R.string.gps)
+            getString(R.string.gps), getString(R.string.map)
         )
 
         listTemperatureUnit = listOf(
-            getString(R.string.kelvin), getString(R.string.celsius), getString(R.string.fahrenheit)
+            getString(R.string.celsius), getString(R.string.kelvin), getString(R.string.fahrenheit)
         )
 
         listWindSpeed = listOf(
@@ -60,11 +69,20 @@ class SettingsFragment : Fragment() {
             getString(R.string.english), getString(R.string.arabic)
         )
 
-        if (!::selectedLocation.isInitialized) selectedLocation = listLocation[0]
-        if (!::selectedTemperatureUnit.isInitialized) selectedTemperatureUnit =
-            listTemperatureUnit[0]
-        if (!::selectedWindSpeed.isInitialized) selectedWindSpeed = listWindSpeed[0]
-        if (!::selectedLanguage.isInitialized) selectedLanguage = listLanguage[0]
+        selectedLocation =
+            sharedPref.getString(KEY_SELECTED_LOCATION, listLocation[0]) ?: listLocation[0]
+        selectedTemperatureUnit =
+            sharedPref.getString(KEY_SELECTED_TEMP_UNIT, listTemperatureUnit[0])
+                ?: listTemperatureUnit[0]
+        selectedWindSpeed =
+            sharedPref.getString(KEY_SELECTED_WIND_SPEED, listWindSpeed[0]) ?: listWindSpeed[0]
+        selectedLanguage =
+            sharedPref.getString(KEY_SELECTED_LANGUAGE, listLanguage[0]) ?: listLanguage[0]
+
+        binding.tvSettingsLocationValue.text = selectedLocation
+        binding.tvSettingsTempValue.text = selectedTemperatureUnit
+        binding.tvSettingsSpeedValue.text = selectedWindSpeed
+        binding.tvSettingsLangValue.text = selectedLanguage
     }
 
     private fun initOnClick() {
@@ -77,9 +95,9 @@ class SettingsFragment : Fragment() {
             ) { selected ->
                 selectedLocation = selected
                 binding.tvSettingsLocationValue.text = selectedLocation
+                saveSelectedItemToPreferences(KEY_SELECTED_LOCATION, selectedLocation)
             }
         }
-
 
         binding.settingsTempClick.setOnClickListener {
             dialogBuilder(
@@ -90,6 +108,7 @@ class SettingsFragment : Fragment() {
             ) { selected ->
                 selectedTemperatureUnit = selected
                 binding.tvSettingsTempValue.text = selectedTemperatureUnit
+                saveSelectedItemToPreferences(KEY_SELECTED_TEMP_UNIT, selectedTemperatureUnit)
             }
         }
 
@@ -102,6 +121,7 @@ class SettingsFragment : Fragment() {
             ) { selected ->
                 selectedWindSpeed = selected
                 binding.tvSettingsSpeedValue.text = selectedWindSpeed
+                saveSelectedItemToPreferences(KEY_SELECTED_WIND_SPEED, selectedWindSpeed)
             }
         }
 
@@ -114,14 +134,13 @@ class SettingsFragment : Fragment() {
             ) { selected ->
                 selectedLanguage = selected
                 binding.tvSettingsLangValue.text = selectedLanguage
+                saveSelectedItemToPreferences(KEY_SELECTED_LANGUAGE, selectedLanguage)
             }
         }
-
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun saveSelectedItemToPreferences(key: String, value: String) {
+        sharedPref.edit().putString(key, value).apply()
     }
 
     private fun dialogBuilder(
@@ -142,5 +161,10 @@ class SettingsFragment : Fragment() {
             dialog.dismiss()
         }
         builder.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

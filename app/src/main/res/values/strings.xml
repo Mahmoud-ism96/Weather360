@@ -36,5 +36,7 @@
     <string name="humidity">Humidity</string>
     <string name="cloud">Cloud</string>
     <string name="save_location">Save Location</string>
+    <string name="first_startup">first_startup</string>
+    <string name="location_type">location_type</string>
 
 </resources>

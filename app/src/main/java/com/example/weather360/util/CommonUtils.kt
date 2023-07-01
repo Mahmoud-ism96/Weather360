@@ -6,6 +6,12 @@ import java.util.Locale
 
 class CommonUtils {
     companion object {
+        const val KEY_FIRST_STARTUP = "first_startup"
+        const val KEY_SELECTED_LOCATION = "selected_location"
+        const val KEY_SELECTED_TEMP_UNIT = "selected_temp_unit"
+        const val KEY_SELECTED_WIND_SPEED = "selected_wind_speed"
+        const val KEY_SELECTED_LANGUAGE = "selected_language"
+
         fun getDayOfWeek(timestamp: Long): String {
             val date = Date(timestamp * 1000L)
 
@@ -31,4 +37,5 @@ class CommonUtils {
             return capitalizedDescription
         }
     }
+
 }

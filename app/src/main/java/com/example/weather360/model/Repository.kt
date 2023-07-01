@@ -21,8 +21,8 @@ class Repository private constructor(
         }
     }
 
-    override fun getForecast(): Flow<Forecast> {
-        return remoteSource.getForecast()
+    override fun getForecast(latitude: Double, longitude: Double): Flow<Forecast> {
+        return remoteSource.getForecast(latitude, longitude)
     }
 
     override suspend fun insertLocation(favoriteLocation: FavoriteLocation) {

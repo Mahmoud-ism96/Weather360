@@ -1,7 +1,5 @@
 package com.example.weather360.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather360.model.RepositoryInterface
@@ -17,13 +15,9 @@ class HomeViewModel(private val _repo: RepositoryInterface) : ViewModel() {
     val forecast: StateFlow<ApiStatus>
         get() = _forecast
 
-    init {
-        getForecast()
-    }
-
-    private fun getForecast() {
+    fun getForecast(latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
-            _repo.getForecast().catch {
+            _repo.getForecast(latitude,longitude).catch {
                 _forecast.value = ApiStatus.Failure(it)
             }.collect() {
                 _forecast.value = ApiStatus.Success(it)
