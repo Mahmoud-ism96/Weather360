@@ -12,6 +12,9 @@ class CommonUtils {
         const val KEY_SELECTED_WIND_SPEED = "selected_wind_speed"
         const val KEY_SELECTED_LANGUAGE = "selected_language"
 
+        const val KEY_CURRENT_LAT = "current_lat"
+        const val KEY_CURRENT_LONG = "current_long"
+
         fun getDayOfWeek(timestamp: Long): String {
             val date = Date(timestamp * 1000L)
 

@@ -27,12 +27,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentHomeBinding
 import com.example.weather360.db.ConcreteLocalSource
+import com.example.weather360.enums.MapSelectionType
 import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Forecast
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
 import com.example.weather360.network.ApiStatus
 import com.example.weather360.util.CommonUtils
+import com.example.weather360.util.CommonUtils.Companion.KEY_CURRENT_LAT
+import com.example.weather360.util.CommonUtils.Companion.KEY_CURRENT_LONG
 import com.example.weather360.util.CommonUtils.Companion.KEY_FIRST_STARTUP
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LOCATION
 import com.example.weather360.util.CommonUtils.Companion.capitalizeWords
@@ -112,25 +115,38 @@ class HomeFragment : Fragment() {
 
         return root
     }
+//
+//    override fun onResume() {
+//        super.onResume()
+//        if (::sharedPref.isInitialized) requestForecast()
+//    }
 
     private fun requestForecast() {
-        when (sharedPref.getString(KEY_SELECTED_LOCATION, getString(R.string.gps))) {
-            getString(R.string.gps) -> {
-                if (checkLocationPermission()) {
-                    getLastLocation()
+        Log.i("TAG", "requestForecast: Started")
+        favLocation = HomeFragmentArgs.fromBundle(requireArguments()).favLocation
+        if (favLocation == null) {
+            when (sharedPref.getString(KEY_SELECTED_LOCATION, getString(R.string.gps))) {
+                getString(R.string.gps) -> {
+                    if (checkLocationPermission()) {
+                        getLastLocation()
+                    }
+                }
+
+                getString(R.string.map) -> {
+                    val currentLatitude = sharedPref.getFloat(KEY_CURRENT_LAT, 0.0f).toDouble()
+                    val currentLongitude = sharedPref.getFloat(KEY_CURRENT_LONG, 0.0f).toDouble()
+                    Log.i("TAG", "requestForecast: $currentLatitude $currentLongitude")
+                    _viewModel.getForecast(currentLatitude, currentLongitude)
                 }
             }
-
-            getString(R.string.map) -> {
-                //                    _viewModel.getForecast()
-            }
+        } else {
+            _viewModel.getForecast(favLocation!!.latitude, favLocation!!.longitude)
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun getLastLocation() {
 
-        Log.i("TAG", "getLastLocation: getLastLocation")
         val locationRequest = LocationRequest.create().apply {
             interval = 0
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -140,7 +156,6 @@ class HomeFragment : Fragment() {
             override fun onLocationResult(locationResult: LocationResult) {
                 lastLatitude = locationResult.lastLocation.latitude
                 lastLongitude = locationResult.lastLocation.longitude
-                Log.i("TAG", "onLocationResult: $lastLongitude, $lastLatitude")
                 _viewModel.getForecast(lastLatitude, lastLongitude)
             }
         }
@@ -178,8 +193,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun initAPIRequest() {
-        favLocation = HomeFragmentArgs.fromBundle(requireArguments()).favLocation
-
         lifecycleScope.launch {
             _viewModel.forecast.collect {
                 when (it) {
@@ -300,6 +313,10 @@ class HomeFragment : Fragment() {
                         putString(KEY_SELECTED_LOCATION, getString(R.string.map))
                         apply()
                     }
+                    val navigationAction = HomeFragmentDirections.actionNavHomeToMapsFragment(
+                        MapSelectionType.CURRENT_LOCATION
+                    )
+                    findNavController().navigate(navigationAction)
 
                 }
             }
@@ -311,7 +328,7 @@ class HomeFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        fusedClient.removeLocationUpdates(locationCallback)
+        if (::locationCallback.isInitialized) fusedClient.removeLocationUpdates(locationCallback)
     }
 
     override fun onDestroyView() {

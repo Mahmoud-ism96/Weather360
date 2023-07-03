@@ -18,6 +18,9 @@
             app:argType="com.example.weather360.model.FavoriteLocation"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_nav_home_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
     </fragment>
 
     <fragment
@@ -42,7 +45,11 @@
         android:id="@+id/nav_settings"
         android:name="com.example.weather360.ui.settings.SettingsFragment"
         android:label="@string/menu_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_nav_settings_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/weeklyFragment"
         android:name="com.example.weather360.ui.weekly.WeeklyFragment"
@@ -56,5 +63,9 @@
         android:id="@+id/mapsFragment"
         android:name="com.example.weather360.ui.map.MapsFragment"
         android:label="MapsFragment"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps">
+        <argument
+            android:name="mapSelectionType"
+            app:argType="com.example.weather360.enums.MapSelectionType" />
+    </fragment>
 </navigation>

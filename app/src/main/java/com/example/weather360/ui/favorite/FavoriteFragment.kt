@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentFavoriteBinding
 import com.example.weather360.db.ConcreteLocalSource
+import com.example.weather360.enums.MapSelectionType
 import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
@@ -45,12 +46,16 @@ class FavoriteFragment : Fragment() {
         val root: View = binding.root
 
         binding.fabAddFav.setOnClickListener {
-            val navigationAction = FavoriteFragmentDirections.actionNavFavoriteToMapsFragment()
+            val navigationAction = FavoriteFragmentDirections.actionNavFavoriteToMapsFragment(
+                MapSelectionType.FAVORITE_LOCATION
+            )
             findNavController().navigate(navigationAction)
         }
 
         recyclerAdapter = FavoriteAdapter(requireContext(), {
-
+            val navigationAction =
+                FavoriteFragmentDirections.actionNavFavoriteToNavHome(favLocation = it)
+            findNavController().navigate(navigationAction)
         }, {
             removeLocationDialog(requireContext(), it)
         })

@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentSettingsBinding
+import com.example.weather360.enums.MapSelectionType
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LANGUAGE
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LOCATION
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_TEMP_UNIT
@@ -96,6 +98,12 @@ class SettingsFragment : Fragment() {
                 selectedLocation = selected
                 binding.tvSettingsLocationValue.text = selectedLocation
                 saveSelectedItemToPreferences(KEY_SELECTED_LOCATION, selectedLocation)
+                if (selectedLocation == getString(R.string.map)) {
+                    val navigationAction = SettingsFragmentDirections.actionNavSettingsToMapsFragment(
+                        MapSelectionType.CURRENT_LOCATION
+                    )
+                    findNavController().navigate(navigationAction)
+                }
             }
         }
 

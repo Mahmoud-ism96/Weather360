@@ -1,5 +1,7 @@
 package com.example.weather360.ui.map
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -11,10 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentMapsBinding
 import com.example.weather360.db.ConcreteLocalSource
+import com.example.weather360.enums.MapSelectionType
 import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
-import com.example.weather360.ui.home.HomeViewModelFactory
+import com.example.weather360.util.CommonUtils
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -32,11 +35,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var countryName: String
 
+    private lateinit var sharedPref: SharedPreferences
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
     private var marker: Marker? = null
+
+    private lateinit var mapSelectionType: MapSelectionType
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -66,14 +73,32 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun saveLocation() {
+        mapSelectionType = MapsFragmentArgs.fromBundle(requireArguments()).mapSelectionType
+
         if (marker != null) {
-            val favoriteLocation = FavoriteLocation(
-                countryName,
-                marker!!.position.longitude,
-                marker!!.position.latitude
-            )
-            mapsViewModel.addToFav(favoriteLocation)
-            requireActivity().supportFragmentManager.popBackStack()
+            when (mapSelectionType) {
+                MapSelectionType.FAVORITE_LOCATION -> {
+                    val favoriteLocation = FavoriteLocation(
+                        countryName, marker!!.position.longitude, marker!!.position.latitude
+                    )
+                    mapsViewModel.addToFav(favoriteLocation)
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
+
+                MapSelectionType.CURRENT_LOCATION -> {
+
+                    sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
+
+                    sharedPref
+                    with(sharedPref.edit()) {
+                        putFloat(CommonUtils.KEY_CURRENT_LAT, marker!!.position.latitude.toFloat())
+                        putFloat(CommonUtils.KEY_CURRENT_LONG, marker!!.position.longitude.toFloat())
+                        apply()
+                    }
+
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
+            }
         }
     }
 
@@ -99,10 +124,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
             if (!address.isNullOrEmpty()) {
                 Log.i("TAG", "setMarkOnClick: $address")
-                if (!address[0].adminArea.isNullOrBlank())
-                    countryName = address[0].adminArea
-                if (!address[0].subAdminArea.isNullOrBlank())
-                    countryName += address[0].subAdminArea
+                if (!address[0].adminArea.isNullOrBlank()) countryName = address[0].adminArea
+                if (!address[0].subAdminArea.isNullOrBlank()) countryName += address[0].subAdminArea
                 countryName += address[0].countryName
             }
             marker = map.addMarker(
