@@ -11,10 +11,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.weather360.R
 import com.example.weather360.databinding.HourlyItemBinding
 import com.example.weather360.model.Hourly
+import com.example.weather360.util.CommonUtils
 import com.example.weather360.util.CommonUtils.Companion.fromUnixToTime
+import com.example.weather360.util.SharedPreferencesSingleton
 
 class HomeAdapter(private val context: Context) :
-    ListAdapter<Hourly, HomeAdapter.HomeViewHolder>(ProductDiffUtil()) {
+    ListAdapter<Hourly, HomeAdapter.HomeViewHolder>(HourlyDiffUtil()) {
 
     private lateinit var binding: HourlyItemBinding
 
@@ -28,20 +30,38 @@ class HomeAdapter(private val context: Context) :
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentItem = getItem(position)
+
         holder.binding.apply {
-            tvHourlyTemp.text = "${currentItem.temp.toInt()} F"
-            tvHourlyTime.text = "${fromUnixToTime(currentItem.dt)}"
+            tvHourlyTime.text = fromUnixToTime(currentItem.dt)
+            when (SharedPreferencesSingleton.readString(
+                CommonUtils.KEY_SELECTED_TEMP_UNIT, context.getString(R.string.celsius)
+            )) {
+                context.getString(R.string.celsius) -> {
+                    tvHourlyTemp.text =
+                        (currentItem.temp - 273.15).toInt().toString() + "°C"
+                }
+
+                context.getString(R.string.kelvin) -> {
+                    tvHourlyTemp.text = currentItem.temp.toInt().toString() + " K"
+                }
+
+                context.getString(R.string.fahrenheit) -> {
+                    tvHourlyTemp.text =
+                        ((currentItem.temp - 273.15) * 9 / 5 + 32).toInt().toString() + "°F"
+                }
+            }
             Glide.with(context)
                 .load("https://openweathermap.org/img/wn/${currentItem.weather[0].icon}.png")
                 .apply(RequestOptions().override(200, 200))
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground).into(ivHourlyIcon)
-
         }
+
+
     }
 }
 
-class ProductDiffUtil : DiffUtil.ItemCallback<Hourly>() {
+class HourlyDiffUtil : DiffUtil.ItemCallback<Hourly>() {
     override fun areItemsTheSame(oldItem: Hourly, newItem: Hourly): Boolean {
         return oldItem == newItem
     }

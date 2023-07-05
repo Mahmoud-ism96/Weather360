@@ -38,5 +38,6 @@
     <string name="save_location">Save Location</string>
     <string name="first_startup">first_startup</string>
     <string name="location_type">location_type</string>
+    <string name="weather_360">Weather 360</string>
 
 </resources>

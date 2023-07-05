@@ -57,7 +57,9 @@
         tools:layout="@layout/fragment_weekly">
         <argument
             android:name="forecast"
-            app:argType="com.example.weather360.model.Forecast" />
+            app:argType="com.example.weather360.model.Forecast"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"

@@ -1,7 +1,5 @@
 package com.example.weather360.ui.map
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.weather360.MainActivity
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentMapsBinding
 import com.example.weather360.db.ConcreteLocalSource
@@ -18,6 +17,7 @@ import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
 import com.example.weather360.util.CommonUtils
+import com.example.weather360.util.SharedPreferencesSingleton
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -34,8 +34,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mapsViewModel: MapsViewModel
 
     private lateinit var countryName: String
-
-    private lateinit var sharedPref: SharedPreferences
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -69,6 +67,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         geocoder = Geocoder(requireContext(), Locale.getDefault())
 
+        (requireActivity() as MainActivity).updateVisiblityOnNavigation(
+            View.GONE, View.VISIBLE
+        )
+
         return root
     }
 
@@ -87,14 +89,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
                 MapSelectionType.CURRENT_LOCATION -> {
 
-                    sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
-
-                    sharedPref
-                    with(sharedPref.edit()) {
-                        putFloat(CommonUtils.KEY_CURRENT_LAT, marker!!.position.latitude.toFloat())
-                        putFloat(CommonUtils.KEY_CURRENT_LONG, marker!!.position.longitude.toFloat())
-                        apply()
-                    }
+                    SharedPreferencesSingleton.writeFloat(
+                        CommonUtils.KEY_CURRENT_LAT, marker!!.position.latitude.toFloat()
+                    )
+                    SharedPreferencesSingleton.writeFloat(
+                        CommonUtils.KEY_CURRENT_LONG, marker!!.position.longitude.toFloat()
+                    )
 
                     requireActivity().supportFragmentManager.popBackStack()
                 }
@@ -141,5 +141,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        (requireActivity() as MainActivity).updateVisiblityOnNavigation(
+            View.VISIBLE, View.GONE
+        )
     }
 }

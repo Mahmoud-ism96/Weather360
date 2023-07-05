@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.weather360.model.FavoriteLocation
 import kotlinx.coroutines.flow.Flow
 
-class ConcreteLocalSource private constructor(private val context: Context) : LocalSource {
+class ConcreteLocalSource private constructor(context: Context) : LocalSource {
 
     private val favoriteLocationDao: FavoriteLocationDao by lazy {
         val db: WeatherDB = WeatherDB.getInstance(context.applicationContext)

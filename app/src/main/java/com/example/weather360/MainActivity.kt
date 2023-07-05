@@ -1,6 +1,7 @@
 package com.example.weather360
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -29,6 +30,11 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.open()
         }
 
+        binding.appBarMain.ibBack.setOnClickListener {
+            updateVisiblityOnNavigation(View.VISIBLE,View.GONE)
+            supportFragmentManager.popBackStack()
+        }
+
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_favorite, R.id.nav_alert
@@ -41,5 +47,10 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    fun updateVisiblityOnNavigation(drawerVisiblity: Int, backVisiblity: Int) {
+        binding.appBarMain.ibDrawer.visibility = drawerVisiblity
+        binding.appBarMain.ibBack.visibility = backVisiblity
     }
 }

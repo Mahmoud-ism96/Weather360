@@ -3,8 +3,6 @@ package com.example.weather360.ui.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -24,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weather360.MainActivity
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentHomeBinding
 import com.example.weather360.db.ConcreteLocalSource
@@ -40,25 +39,24 @@ import com.example.weather360.util.CommonUtils.Companion.KEY_FIRST_STARTUP
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LOCATION
 import com.example.weather360.util.CommonUtils.Companion.capitalizeWords
 import com.example.weather360.util.CommonUtils.Companion.fromUnixToString
+import com.example.weather360.util.SharedPreferencesSingleton
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
+
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var _viewModel: HomeViewModel
     private lateinit var recyclerAdapter: HomeAdapter
-
-    private lateinit var sharedPref: SharedPreferences
 
     private var favLocation: FavoriteLocation? = null
 
@@ -74,7 +72,7 @@ class HomeFragment : Fragment() {
         if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
             getLastLocation()
         } else {
-
+            //TODO: handle the ELSE
         }
     }
 
@@ -92,6 +90,8 @@ class HomeFragment : Fragment() {
 
         _viewModel = ViewModelProvider(this, _viewModelFactory)[HomeViewModel::class.java]
 
+        SharedPreferencesSingleton.initialize(requireContext())
+
         initRecyclerView()
 
         initAPIRequest()
@@ -101,13 +101,15 @@ class HomeFragment : Fragment() {
         if (isFirstStartUp()) {
             startUpDialog()
 
-            sharedPref
-            with(sharedPref.edit()) {
-                putString(CommonUtils.KEY_SELECTED_TEMP_UNIT, getString(R.string.celsius))
-                putString(CommonUtils.KEY_SELECTED_WIND_SPEED, getString(R.string.meter_sec))
-                putString(CommonUtils.KEY_SELECTED_LANGUAGE, getString(R.string.english))
-                apply()
-            }
+            SharedPreferencesSingleton.writeString(
+                CommonUtils.KEY_SELECTED_TEMP_UNIT, getString(R.string.celsius)
+            )
+            SharedPreferencesSingleton.writeString(
+                CommonUtils.KEY_SELECTED_WIND_SPEED, getString(R.string.meter_sec)
+            )
+            SharedPreferencesSingleton.writeString(
+                CommonUtils.KEY_SELECTED_LANGUAGE, getString(R.string.english)
+            )
 
         } else {
             requestForecast()
@@ -115,17 +117,14 @@ class HomeFragment : Fragment() {
 
         return root
     }
-//
-//    override fun onResume() {
-//        super.onResume()
-//        if (::sharedPref.isInitialized) requestForecast()
-//    }
 
     private fun requestForecast() {
         Log.i("TAG", "requestForecast: Started")
         favLocation = HomeFragmentArgs.fromBundle(requireArguments()).favLocation
         if (favLocation == null) {
-            when (sharedPref.getString(KEY_SELECTED_LOCATION, getString(R.string.gps))) {
+            when (SharedPreferencesSingleton.readString(
+                KEY_SELECTED_LOCATION, getString(R.string.gps)
+            )) {
                 getString(R.string.gps) -> {
                     if (checkLocationPermission()) {
                         getLastLocation()
@@ -133,13 +132,16 @@ class HomeFragment : Fragment() {
                 }
 
                 getString(R.string.map) -> {
-                    val currentLatitude = sharedPref.getFloat(KEY_CURRENT_LAT, 0.0f).toDouble()
-                    val currentLongitude = sharedPref.getFloat(KEY_CURRENT_LONG, 0.0f).toDouble()
+                    val currentLatitude =
+                        SharedPreferencesSingleton.readFloat(KEY_CURRENT_LAT, 0.0f).toDouble()
+                    val currentLongitude =
+                        SharedPreferencesSingleton.readFloat(KEY_CURRENT_LONG, 0.0f).toDouble()
                     Log.i("TAG", "requestForecast: $currentLatitude $currentLongitude")
                     _viewModel.getForecast(currentLatitude, currentLongitude)
                 }
             }
         } else {
+            (requireActivity() as MainActivity).updateVisiblityOnNavigation(View.GONE, View.VISIBLE)
             _viewModel.getForecast(favLocation!!.latitude, favLocation!!.longitude)
         }
     }
@@ -173,18 +175,14 @@ class HomeFragment : Fragment() {
                 requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            Log.i("Main", "Permissions : True")
             result = true
         } else {
-            Log.i("Main", "Permissions : False")
             requestPermission()
         }
         return result
     }
 
     private fun requestPermission() {
-
-
         locationPermissionLauncher.launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
@@ -194,7 +192,7 @@ class HomeFragment : Fragment() {
 
     private fun initAPIRequest() {
         lifecycleScope.launch {
-            _viewModel.forecast.collect {
+            _viewModel.forecast.collectLatest {
                 when (it) {
                     is ApiStatus.Success -> {
                         val forecast = it.forecast
@@ -230,10 +228,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun isFirstStartUp(): Boolean {
-        sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return true
-        val firstStartup = sharedPref.getBoolean(getString(R.string.first_startup), true)
-
-        return firstStartup
+        return SharedPreferencesSingleton.readBoolean(getString(R.string.first_startup), true)
     }
 
     private fun showData(forecast: Forecast) {
@@ -260,20 +255,50 @@ class HomeFragment : Fragment() {
                 "50n" -> lottieMain.setAnimation(R.raw.weather_mist)
             }
 
-            tvCityName.text = forecast.timezone
+            val cityName: List<String> = forecast.timezone.split("/")
+            tvCityName.text = cityName[1]
             tvHomeCurrentDate.text = fromUnixToString(forecast.current.dt)
-            tvHomeTemp.text = forecast.current.temp.toInt().toString()
-            tvHomeFeelsLike.text = ("/${forecast.current.feels_like.toInt()} F")
+
+            when (SharedPreferencesSingleton.readString(
+                CommonUtils.KEY_SELECTED_TEMP_UNIT, getString(R.string.celsius)
+            )) {
+                getString(R.string.celsius) -> {
+                    tvHomeTemp.text = (forecast.current.temp - 273.15).toInt().toString()
+                    tvHomeFeelsLike.text = ("/${(forecast.current.feels_like - 273.15).toInt()}°C")
+                }
+
+                getString(R.string.kelvin) -> {
+                    tvHomeTemp.text = forecast.current.temp.toInt().toString()
+                    tvHomeFeelsLike.text = ("/${forecast.current.feels_like.toInt()} K")
+                }
+
+                getString(R.string.fahrenheit) -> {
+                    tvHomeTemp.text =
+                        ((forecast.current.temp - 273.15) * 9 / 5 + 32).toInt().toString()
+                    tvHomeFeelsLike.text =
+                        ("/${((forecast.current.feels_like - 273.15) * 9 / 5 + 32).toInt()}°F")
+                }
+            }
 
             tvHomeTempStatus.text = capitalizeWords(forecast.current.weather[0].description)
 
-            tvHomeWind.text = ("${forecast.current.wind_speed} mile/h")
+            when (SharedPreferencesSingleton.readString(
+                CommonUtils.KEY_SELECTED_WIND_SPEED, getString(R.string.meter_sec)
+            )) {
+                getString(R.string.miles_hour) -> {
+                    tvHomeWind.text = "${(forecast.current.wind_speed * 2.23694).toInt()} mile/h"
+                }
+
+                getString(R.string.meter_sec) -> {
+                    tvHomeWind.text = "${forecast.current.wind_speed.toInt()} metre/s"
+                }
+            }
+
             tvHomeHumidity.text = ("${forecast.current.humidity} %")
             tvHomeCloud.text = ("${forecast.current.clouds} %")
             tvHomeUv.text = forecast.current.uvi.toString()
-            tvHomePressure.text = ("${forecast.current.pressure} hpa")
+            tvHomePressure.text = ("${forecast.current.pressure} hPa")
             tvHomeVisibity.text = ("${forecast.current.visibility} m")
-
         }
     }
 
@@ -297,22 +322,18 @@ class HomeFragment : Fragment() {
 
             when {
                 rb_GPS.isChecked -> {
-                    sharedPref
-                    with(sharedPref.edit()) {
-                        putBoolean(KEY_FIRST_STARTUP, false)
-                        putString(KEY_SELECTED_LOCATION, getString(R.string.gps))
-                        apply()
-                    }
+                    SharedPreferencesSingleton.writeBoolean(KEY_FIRST_STARTUP, false)
+                    SharedPreferencesSingleton.writeString(
+                        KEY_SELECTED_LOCATION, getString(R.string.gps)
+                    )
                     requestForecast()
                 }
 
                 rb_Map.isChecked -> {
-                    sharedPref
-                    with(sharedPref.edit()) {
-                        putBoolean(KEY_FIRST_STARTUP, false)
-                        putString(KEY_SELECTED_LOCATION, getString(R.string.map))
-                        apply()
-                    }
+                    SharedPreferencesSingleton.writeBoolean(KEY_FIRST_STARTUP, false)
+                    SharedPreferencesSingleton.writeString(
+                        KEY_SELECTED_LOCATION, getString(R.string.map)
+                    )
                     val navigationAction = HomeFragmentDirections.actionNavHomeToMapsFragment(
                         MapSelectionType.CURRENT_LOCATION
                     )
@@ -329,10 +350,9 @@ class HomeFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         if (::locationCallback.isInitialized) fusedClient.removeLocationUpdates(locationCallback)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        if (favLocation != null) (requireActivity() as MainActivity).updateVisiblityOnNavigation(
+            View.VISIBLE,
+            View.GONE
+        )
     }
 }

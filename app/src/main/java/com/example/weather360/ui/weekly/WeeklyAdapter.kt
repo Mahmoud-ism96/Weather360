@@ -1,7 +1,6 @@
 package com.example.weather360.ui.weekly
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -12,7 +11,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.weather360.R
 import com.example.weather360.databinding.WeeklyItemBinding
 import com.example.weather360.model.Daily
+import com.example.weather360.util.CommonUtils
 import com.example.weather360.util.CommonUtils.Companion.getDayOfWeek
+import com.example.weather360.util.SharedPreferencesSingleton
 
 class WeeklyAdapter(private val context: Context) :
     ListAdapter<Daily, WeeklyAdapter.WeeklyViewHolder>(ProductDiffUtil()) {
@@ -30,9 +31,26 @@ class WeeklyAdapter(private val context: Context) :
     override fun onBindViewHolder(holder: WeeklyViewHolder, position: Int) {
         val currentItem = getItem(position)
         holder.binding.apply {
-            Log.i("TAG", "onBindViewHolder: $currentItem")
-            tvWeeklyItemTemp.text = "${currentItem.temp.day.toInt()}"
-            tvWeeklyItemFeelsLike.text = "/${currentItem.feels_like.day.toInt()} F"
+            when (SharedPreferencesSingleton.readString(
+                CommonUtils.KEY_SELECTED_TEMP_UNIT, context.getString(R.string.celsius)
+            )) {
+                context.getString(R.string.celsius) -> {
+                    tvWeeklyItemTemp.text = (currentItem.temp.day - 273.15).toInt().toString()
+                    tvWeeklyItemFeelsLike.text = ("/${(currentItem.feels_like.day - 273.15).toInt()}°C")
+                }
+
+                context.getString(R.string.kelvin) -> {
+                    tvWeeklyItemTemp.text = currentItem.temp.day.toInt().toString()
+                    tvWeeklyItemFeelsLike.text = ("/${currentItem.feels_like.day.toInt()} K")
+                }
+
+                context.getString(R.string.fahrenheit) -> {
+                    tvWeeklyItemTemp.text =
+                        ((currentItem.temp.day - 273.15) * 9 / 5 + 32).toInt().toString()
+                    tvWeeklyItemFeelsLike.text =
+                        ("/${((currentItem.feels_like.day - 273.15) * 9 / 5 + 32).toInt()}°F")
+                }
+            }
 
             val description = currentItem.weather[0].description
             val capitalizedDescription =
