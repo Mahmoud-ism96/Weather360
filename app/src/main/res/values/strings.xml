@@ -39,5 +39,11 @@
     <string name="first_startup">first_startup</string>
     <string name="location_type">location_type</string>
     <string name="weather_360">Weather 360</string>
+    <string name="alerts">Alerts</string>
+    <string name="sure">Sure</string>
+    <string name="remove_alert">Remove Alert</string>
+    <string name="remove_alert_dialog_message">Are you sure you want to remove this alert?</string>
+    <string name="delete_favorite_location">Delete Favorite Location</string>
+    <string name="remove_location_dialog_message">Are you sure you want to remove this location from favorites?</string>
 
 </resources>

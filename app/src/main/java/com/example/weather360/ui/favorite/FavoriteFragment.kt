@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -17,6 +18,7 @@ import com.example.weather360.enums.MapSelectionType
 import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
+import com.example.weather360.util.CommonUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class FavoriteFragment : Fragment() {
@@ -46,13 +48,18 @@ class FavoriteFragment : Fragment() {
         val root: View = binding.root
 
         binding.fabAddFav.setOnClickListener {
-            val navigationAction = FavoriteFragmentDirections.actionNavFavoriteToMapsFragment(
-                MapSelectionType.FAVORITE_LOCATION
-            )
-            findNavController().navigate(navigationAction)
+            if (CommonUtils.checkConnectivity(requireActivity())) {
+                val navigationAction = FavoriteFragmentDirections.actionNavFavoriteToMapsFragment(
+                    MapSelectionType.FAVORITE_LOCATION
+                )
+                findNavController().navigate(navigationAction)
+            } else {
+                Toast.makeText(requireContext(), "No internet connection", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
-        recyclerAdapter = FavoriteAdapter(requireContext(), {
+        recyclerAdapter = FavoriteAdapter({
             val navigationAction =
                 FavoriteFragmentDirections.actionNavFavoriteToNavHome(favLocation = it)
             findNavController().navigate(navigationAction)
@@ -75,10 +82,11 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun removeLocationDialog(context: Context, favoriteLocation: FavoriteLocation) {
-        MaterialAlertDialogBuilder(context).setTitle("Delete").setMessage("Are you Sure?")
+        MaterialAlertDialogBuilder(context).setTitle(getString(R.string.delete_favorite_location)).setMessage(getString(
+                    R.string.remove_location_dialog_message))
             .setNeutralButton(resources.getString(R.string.cancel)) { dialog, which ->
                 // Respond to neutral button press
-            }.setPositiveButton("Sure") { dialog, which ->
+            }.setPositiveButton(getString(R.string.sure)) { dialog, which ->
                 _viewModel.removeFromFav(favoriteLocation)
             }.show()
     }

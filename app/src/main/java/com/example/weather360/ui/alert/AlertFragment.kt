@@ -1,28 +1,43 @@
 package com.example.weather360.ui.alert
 
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.style.UnderlineSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentAlertBinding
+import com.example.weather360.db.ConcreteLocalSource
+import com.example.weather360.model.AlertForecast
+import com.example.weather360.model.Repository
+import com.example.weather360.network.ApiClient
+import com.example.weather360.util.AlarmUtils
+import com.example.weather360.util.AlarmUtils.cancelAlarm
+import com.example.weather360.util.CommonUtils.Companion.readCache
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
+import kotlin.random.Random
 
 
 class AlertFragment : Fragment() {
@@ -32,18 +47,46 @@ class AlertFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var _viewModel: AlertViewModel
+    private lateinit var alertTime: Calendar
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var recyclerAdapter: AlertAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val alertViewModel = ViewModelProvider(this).get(AlertViewModel::class.java)
+        val _viewModelFactory = AlertViewModelFactory(
+            Repository.getInstance(
+                ApiClient, ConcreteLocalSource.getInstance(requireContext())
+            )
+        )
+
+        _viewModel = ViewModelProvider(this, _viewModelFactory)[AlertViewModel::class.java]
 
         _binding = FragmentAlertBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        recyclerAdapter = AlertAdapter {
+            removeAlertDialog(requireContext(), it)
+        }
+
+        binding.rvAlerts.apply {
+            adapter = recyclerAdapter
+            layoutManager = LinearLayoutManager(context).apply {
+                orientation = RecyclerView.VERTICAL
+            }
+        }
+
+        _viewModel.alerts.observe(requireActivity()) {
+            recyclerAdapter.submitList(it)
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
         val dialog = Dialog(requireContext())
 
         binding.fabAddAlert.setOnClickListener {
+
             dialog.setContentView(R.layout.dialog_alert)
             dialog.window?.setLayout(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -56,52 +99,124 @@ class AlertFragment : Fragment() {
             val btn_ok = dialog.findViewById<TextView>(R.id.btn_alert_ok)
             val btn_cancel = dialog.findViewById<TextView>(R.id.btn_alert_cancel)
 
+            var timeSelected = ""
+            var dateSelected = ""
+
+            alertTime = Calendar.getInstance()
+
+            tv_datePicker.text = SimpleDateFormat(
+                "MMM dd, yyyy", Locale.getDefault()
+            ).format(Date(alertTime.timeInMillis))
+
+            tv_timePicker.text = SimpleDateFormat(
+                "hh:mm a", Locale.getDefault()
+            ).format(alertTime.timeInMillis)
 
             tv_timePicker.setOnClickListener {
+
+                val hour = alertTime.get(Calendar.HOUR_OF_DAY)
+                val minute = alertTime.get(Calendar.MINUTE)
+
                 val picker =
-                    MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).setHour(12)
-                        .setMinute(10).setTitleText("Select Appointment time").build()
+                    MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).setHour(hour)
+                        .setMinute(minute).setTitleText("Select Appointment time").build()
 
                 picker.show(parentFragmentManager, "TIME")
 
                 picker.addOnPositiveButtonClickListener {
-                    val calendar = Calendar.getInstance()
-                    calendar.set(Calendar.HOUR_OF_DAY, picker.hour)
-                    calendar.set(Calendar.MINUTE, picker.minute)
-                    val format = SimpleDateFormat("hh:mm a", Locale.getDefault())
-                    val timeSelected = format.format(calendar.time)
+                    alertTime.set(Calendar.HOUR_OF_DAY, picker.hour)
+                    alertTime.set(Calendar.MINUTE, picker.minute)
+                    timeSelected =
+                        SimpleDateFormat("hh:mm a", Locale.getDefault()).format(alertTime.time)
                     tv_timePicker.text = timeSelected
+
                 }
             }
 
             tv_datePicker.setOnClickListener {
+
                 val picker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date")
-                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build()
+                    .setSelection(alertTime.timeInMillis).build()
                 picker.show(parentFragmentManager, "DATE")
 
                 picker.addOnPositiveButtonClickListener {
-                    val dateSelected =
-                        SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(it))
+                    val selectedDate = Date(it)
+                    val calendar = Calendar.getInstance()
+                    calendar.time = selectedDate
+
+                    calendar.timeZone = TimeZone.getTimeZone("UTC")
+
+                    val day = calendar.get(Calendar.DAY_OF_MONTH)
+                    val month = calendar.get(Calendar.MONTH)
+                    val year = calendar.get(Calendar.YEAR)
+
+                    dateSelected =
+                        SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(selectedDate)
+
                     tv_datePicker.text = dateSelected
+
+                    alertTime.set(Calendar.YEAR, year)
+                    alertTime.set(Calendar.MONTH, month)
+                    alertTime.set(Calendar.DAY_OF_MONTH, day)
                 }
-
-
             }
 
             btn_ok.setOnClickListener {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val cachedForecast = withContext(Dispatchers.IO) { readCache(requireContext()) }
 
+                    if (cachedForecast != null) {
+                        val requestCode = Random.nextInt(Int.MAX_VALUE)
 
+                        if (timeSelected.isBlank()) {
+                            timeSelected = SimpleDateFormat(
+                                "hh:mm a", Locale.getDefault()
+                            ).format(Calendar.getInstance().time)
+                        }
 
-                dialog.dismiss()
+                        if (dateSelected.isBlank()) {
+                            dateSelected =
+                                SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(
+                                    Calendar.getInstance().time
+                                )
+                        }
+
+                        val alertForecast = AlertForecast(
+                            requestCode,
+                            timeSelected,
+                            dateSelected,
+                            cachedForecast.lon,
+                            cachedForecast.lat
+                        )
+
+                        _viewModel.insertAlert(alertForecast)
+
+                        AlarmUtils.setAlarm(
+                            requireContext(), alertTime.timeInMillis, requestCode, cachedForecast
+                        )
+
+                        dialog.dismiss()
+                    }
+                }
             }
 
             btn_cancel.setOnClickListener { dialog.dismiss() }
 
             dialog.show()
-
         }
 
         return root
+    }
+
+    private fun removeAlertDialog(context: Context, alertForecast: AlertForecast) {
+        MaterialAlertDialogBuilder(context).setTitle(getString(R.string.remove_alert)).setMessage(getString(
+                    R.string.remove_alert_dialog_message))
+            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, which ->
+                // Respond to neutral button press
+            }.setPositiveButton(getString(R.string.sure)) { dialog, which ->
+                _viewModel.deleteAlert(alertForecast)
+                cancelAlarm(context, alertForecast.id)
+            }.show()
     }
 
     override fun onDestroyView() {

@@ -7,4 +7,9 @@ interface RepositoryInterface {
     suspend fun insertLocation(favoriteLocation: FavoriteLocation)
     fun getStoredLocations(): Flow<List<FavoriteLocation>>
     suspend fun deleteLocation(favoriteLocation: FavoriteLocation)
+
+    suspend fun insertAlertForecast(alertForecast: AlertForecast)
+    suspend fun deleteAlertForecast(alertForecast: AlertForecast)
+    suspend fun deleteAlertForecastById(id: Int)
+    fun getStoredAlertForecasts(): Flow<List<AlertForecast>>
 }

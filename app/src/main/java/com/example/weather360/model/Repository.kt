@@ -37,4 +37,20 @@ class Repository private constructor(
         localSource.deleteFavLocation(favoriteLocation)
     }
 
+    override suspend fun insertAlertForecast(alertForecast: AlertForecast) {
+        localSource.insertAlertForecast(alertForecast)
+    }
+
+    override suspend fun deleteAlertForecast(alertForecast: AlertForecast) {
+        localSource.deleteAlertForecast(alertForecast)
+    }
+
+    override suspend fun deleteAlertForecastById(id: Int) {
+        localSource.deleteAlertForecastById(id)
+    }
+
+    override fun getStoredAlertForecasts(): Flow<List<AlertForecast>> {
+        return localSource.getAllStoredAlertForecasts()
+    }
+
 }

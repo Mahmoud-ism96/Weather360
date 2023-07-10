@@ -1,9 +1,11 @@
 package com.example.weather360.model
 
+import java.io.Serializable
+
 data class Current(
     val clouds: Int,
     val dew_point: Double,
-    val dt: Int,
+    val dt: Long,
     val feels_like: Double,
     val humidity: Int,
     val pressure: Int,
@@ -16,4 +18,4 @@ data class Current(
     val wind_deg: Int,
     val wind_gust: Double,
     val wind_speed: Double
-)
+) : Serializable

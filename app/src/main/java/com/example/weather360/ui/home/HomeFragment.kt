@@ -38,7 +38,10 @@ import com.example.weather360.util.CommonUtils.Companion.KEY_CURRENT_LONG
 import com.example.weather360.util.CommonUtils.Companion.KEY_FIRST_STARTUP
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LOCATION
 import com.example.weather360.util.CommonUtils.Companion.capitalizeWords
+import com.example.weather360.util.CommonUtils.Companion.checkConnectivity
 import com.example.weather360.util.CommonUtils.Companion.fromUnixToString
+import com.example.weather360.util.CommonUtils.Companion.readCache
+import com.example.weather360.util.CommonUtils.Companion.writeCache
 import com.example.weather360.util.SharedPreferencesSingleton
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -74,6 +77,13 @@ class HomeFragment : Fragment() {
         } else {
             //TODO: handle the ELSE
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (favLocation != null) (requireActivity() as MainActivity).updateVisiblityOnNavigation(
+            View.GONE, View.VISIBLE
+        )
     }
 
     override fun onCreateView(
@@ -119,30 +129,45 @@ class HomeFragment : Fragment() {
     }
 
     private fun requestForecast() {
-        Log.i("TAG", "requestForecast: Started")
         favLocation = HomeFragmentArgs.fromBundle(requireArguments()).favLocation
-        if (favLocation == null) {
-            when (SharedPreferencesSingleton.readString(
-                KEY_SELECTED_LOCATION, getString(R.string.gps)
-            )) {
-                getString(R.string.gps) -> {
-                    if (checkLocationPermission()) {
-                        getLastLocation()
+
+        if (checkConnectivity(requireActivity())) {
+            if (favLocation == null) {
+                when (SharedPreferencesSingleton.readString(
+                    KEY_SELECTED_LOCATION, getString(R.string.gps)
+                )) {
+                    getString(R.string.gps) -> {
+                        if (checkLocationPermission()) {
+                            getLastLocation()
+                        }
+                    }
+
+                    getString(R.string.map) -> {
+                        val currentLatitude =
+                            SharedPreferencesSingleton.readFloat(KEY_CURRENT_LAT, 0.0f).toDouble()
+                        val currentLongitude =
+                            SharedPreferencesSingleton.readFloat(KEY_CURRENT_LONG, 0.0f).toDouble()
+                        Log.i("TAG", "requestForecast: $currentLatitude $currentLongitude")
+                        _viewModel.getForecast(currentLatitude, currentLongitude)
                     }
                 }
-
-                getString(R.string.map) -> {
-                    val currentLatitude =
-                        SharedPreferencesSingleton.readFloat(KEY_CURRENT_LAT, 0.0f).toDouble()
-                    val currentLongitude =
-                        SharedPreferencesSingleton.readFloat(KEY_CURRENT_LONG, 0.0f).toDouble()
-                    Log.i("TAG", "requestForecast: $currentLatitude $currentLongitude")
-                    _viewModel.getForecast(currentLatitude, currentLongitude)
-                }
+            } else {
+                (requireActivity() as MainActivity).updateVisiblityOnNavigation(
+                    View.GONE, View.VISIBLE
+                )
+                _viewModel.getForecast(favLocation!!.latitude, favLocation!!.longitude)
             }
         } else {
-            (requireActivity() as MainActivity).updateVisiblityOnNavigation(View.GONE, View.VISIBLE)
-            _viewModel.getForecast(favLocation!!.latitude, favLocation!!.longitude)
+            val cachedForecast = readCache(requireContext())
+            if (cachedForecast != null) {
+                showData(cachedForecast)
+
+                binding.homeShowDaysClick.setOnClickListener {
+                    val navigationAction =
+                        HomeFragmentDirections.actionNavHomeToWeeklyFragment(cachedForecast)
+                    findNavController().navigate(navigationAction)
+                }
+            }
         }
     }
 
@@ -197,6 +222,8 @@ class HomeFragment : Fragment() {
                     is ApiStatus.Success -> {
                         val forecast = it.forecast
                         showData(forecast)
+
+                        if (favLocation == null) writeCache(forecast,requireContext())
 
                         binding.homeShowDaysClick.setOnClickListener {
                             val navigationAction =
@@ -351,8 +378,7 @@ class HomeFragment : Fragment() {
         super.onStop()
         if (::locationCallback.isInitialized) fusedClient.removeLocationUpdates(locationCallback)
         if (favLocation != null) (requireActivity() as MainActivity).updateVisiblityOnNavigation(
-            View.VISIBLE,
-            View.GONE
+            View.VISIBLE, View.GONE
         )
     }
 }

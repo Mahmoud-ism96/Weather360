@@ -2,7 +2,6 @@ package com.example.weather360.ui.map
 
 import android.location.Geocoder
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -123,10 +122,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             countryName = "Unknown"
 
             if (!address.isNullOrEmpty()) {
-                Log.i("TAG", "setMarkOnClick: $address")
-                if (!address[0].adminArea.isNullOrBlank()) countryName = address[0].adminArea
-                if (!address[0].subAdminArea.isNullOrBlank()) countryName += address[0].subAdminArea
-                countryName += address[0].countryName
+                if (!address[0].adminArea.isNullOrBlank()) countryName = address[0].adminArea + ", "
+                else countryName = "Unknown, "
+
+                if (!address[0].countryName.isNullOrBlank()) countryName += address[0].countryName
+                else countryName = "Unknown"
             }
             marker = map.addMarker(
                 MarkerOptions().position(latLng).title(countryName).snippet(snippet)

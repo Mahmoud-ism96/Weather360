@@ -15,11 +15,11 @@ object ApiClient : RemoteSource {
 
 
     override fun getForecast(latitude: Double, longitude: Double): Flow<Forecast> = flow {
-        val request = retrofitService.getWeather(
+        val response = retrofitService.getWeather(
             latitude, longitude, "en", "0d5916207f9ba5c980b88f81bbece1ea"
         )
-        if (request.isSuccessful) {
-            emit(request.body()!!)
+        if (response.isSuccessful) {
+            emit(response.body()!!)
         }
 
     }

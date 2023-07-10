@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.weather360.model.AlertForecast
 import com.example.weather360.model.FavoriteLocation
 
-@Database(entities = [FavoriteLocation::class], version = 1)
+@Database(entities = [FavoriteLocation::class,AlertForecast::class], version = 1)
 abstract class WeatherDB : RoomDatabase() {
     abstract fun getFavoriteLocationDao(): FavoriteLocationDao
+    abstract fun getAlertForecastDao(): AlertForecastDao
 
     companion object {
         @Volatile
