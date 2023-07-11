@@ -21,8 +21,10 @@ class Repository private constructor(
         }
     }
 
-    override fun getForecast(latitude: Double, longitude: Double): Flow<Forecast> {
-        return remoteSource.getForecast(latitude, longitude)
+    override fun getForecast(
+        latitude: Double, longitude: Double, language: String
+    ): Flow<Forecast> {
+        return remoteSource.getForecast(latitude, longitude, language)
     }
 
     override suspend fun insertLocation(favoriteLocation: FavoriteLocation) {

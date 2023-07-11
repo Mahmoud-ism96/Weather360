@@ -41,7 +41,7 @@
                 android:id="@+id/iv_hourly_icon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                app:srcCompat="@drawable/cloud" />
+                tools:srcCompat="@drawable/cloud" />
 
             <TextView
                 android:id="@+id/tv_hourly_time"

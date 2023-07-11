@@ -11,6 +11,12 @@ import com.example.weather360.MainActivity
 import com.example.weather360.R
 import com.example.weather360.databinding.FragmentWeeklyBinding
 import com.example.weather360.util.CommonUtils
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_TEMP_UNIT
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_CELSIUS
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_FAHRENHEIT
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_KELVIN
+import com.example.weather360.util.CommonUtils.Companion.WIND_VALUE_METER
+import com.example.weather360.util.CommonUtils.Companion.WIND_VALUE_MILE
 import com.example.weather360.util.CommonUtils.Companion.capitalizeWords
 import com.example.weather360.util.SharedPreferencesSingleton
 import java.text.SimpleDateFormat
@@ -63,39 +69,39 @@ class WeeklyFragment : Fragment() {
                 }
 
                 when (SharedPreferencesSingleton.readString(
-                    CommonUtils.KEY_SELECTED_TEMP_UNIT, getString(R.string.celsius)
+                    KEY_SELECTED_TEMP_UNIT, TEMP_VALUE_CELSIUS
                 )) {
-                    getString(R.string.celsius) -> {
+                    TEMP_VALUE_CELSIUS -> {
                         tvWeeklyTemp.text = (forecast.daily[0].temp.day - 273.15).toInt().toString()
                         tvWeeklyFeelsLike.text =
-                            ("/${(forecast.daily[0].feels_like.day - 273.15).toInt()} C")
+                            ("/${(forecast.daily[0].feels_like.day - 273.15).toInt()} " + getString(R.string.celsius_unit))
                     }
 
-                    getString(R.string.kelvin) -> {
+                    TEMP_VALUE_KELVIN-> {
                         tvWeeklyTemp.text = forecast.daily[0].temp.day.toInt().toString()
-                        tvWeeklyFeelsLike.text = ("/${forecast.daily[0].feels_like.day.toInt()} K")
+                        tvWeeklyFeelsLike.text = ("/${forecast.daily[0].feels_like.day.toInt()} " + getString(R.string.kelvin_unit))
                     }
 
-                    getString(R.string.fahrenheit) -> {
+                    TEMP_VALUE_FAHRENHEIT -> {
                         tvWeeklyTemp.text =
                             ((forecast.daily[0].temp.day - 273.15) * 9 / 5 + 32).toInt().toString()
                         tvWeeklyFeelsLike.text =
-                            ("/${((forecast.daily[0].feels_like.day - 273.15) * 9 / 5 + 32).toInt()} F")
+                            ("/${((forecast.daily[0].feels_like.day - 273.15) * 9 / 5 + 32).toInt()} " + getString(R.string.fahrenheit_unit))
                     }
                 }
 
                 tvWeeklyState.text = capitalizeWords(forecast.current.weather[0].description)
 
                 when (SharedPreferencesSingleton.readString(
-                    CommonUtils.KEY_SELECTED_WIND_SPEED, getString(R.string.meter_sec)
+                    CommonUtils.KEY_SELECTED_WIND_SPEED, WIND_VALUE_METER
                 )) {
-                    getString(R.string.miles_hour) -> {
+                    WIND_VALUE_MILE -> {
                         tvWeeklyWind.text =
-                            "${(forecast.daily[0].wind_speed * 2.23694).toInt()} mile/h"
+                            "${(forecast.daily[0].wind_speed * 2.23694).toInt()} " + getString(R.string.mile_h)
                     }
 
-                    getString(R.string.meter_sec) -> {
-                        tvWeeklyWind.text = "${forecast.daily[0].wind_speed.toInt()} metre/s"
+                    WIND_VALUE_METER -> {
+                        tvWeeklyWind.text = "${forecast.daily[0].wind_speed.toInt()} " + getString(R.string.metre_s)
                     }
                 }
 
@@ -116,7 +122,7 @@ class WeeklyFragment : Fragment() {
             val mutableList = forecast.daily.toMutableList()
             mutableList.removeAt(0)
 
-            val currentDate = Date(forecast.daily[0].dt.toLong() * 1000)
+            val currentDate = Date(forecast.daily[0].dt * 1000)
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val dateString = simpleDateFormat.format(currentDate)
             val todayString = simpleDateFormat.format(Date())

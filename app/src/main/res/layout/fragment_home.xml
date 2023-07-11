@@ -112,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Wind"
+                        android:text="@string/wind"
                         android:textColor="#80000000"
                         android:textSize="12sp" />
 
@@ -160,7 +160,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Humidity"
+                        android:text="@string/humidity"
                         android:textColor="#80000000"
                         android:textSize="12sp" />
 
@@ -208,7 +208,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Cloud"
+                        android:text="@string/cloud"
                         android:textColor="#80000000"
                         android:textSize="12sp" />
 
@@ -259,7 +259,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="UV"
+                        android:text="@string/ultra_violet"
                         android:textColor="#80000000"
                         android:textSize="12sp" />
 
@@ -307,7 +307,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Pressure"
+                        android:text="@string/pressure"
                         android:textColor="#80000000"
                         android:textSize="12sp" />
 
@@ -354,7 +354,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:text="Visiblity"
+                        android:text="@string/visiblity"
                         android:textColor="#80000000"
                         android:textSize="12sp" />
 
@@ -370,7 +370,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Today"
+            android:text="@string/today"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -445,7 +445,7 @@
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
+                android:paddingStart="16dp"
                 android:text="@string/_7_days"
                 android:textColor="#80000000" />
 
@@ -454,6 +454,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:rotationX="-1"
+                android:rotationY="176"
                 android:tintMode="src_in"
                 app:srcCompat="@drawable/round_navigate_next_black_24"
                 app:tint="#80000000" />

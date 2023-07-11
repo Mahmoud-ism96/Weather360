@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Weather360</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Home</string>
@@ -36,7 +36,6 @@
     <string name="humidity">Humidity</string>
     <string name="cloud">Cloud</string>
     <string name="save_location">Save Location</string>
-    <string name="first_startup">first_startup</string>
     <string name="location_type">location_type</string>
     <string name="weather_360">Weather 360</string>
     <string name="alerts">Alerts</string>
@@ -45,5 +44,22 @@
     <string name="remove_alert_dialog_message">Are you sure you want to remove this alert?</string>
     <string name="delete_favorite_location">Delete Favorite Location</string>
     <string name="remove_location_dialog_message">Are you sure you want to remove this location from favorites?</string>
+    <string name="set_alarm">Set Alarm</string>
+    <string name="ok">Ok</string>
+    <string name="setup_location">Setup Location</string>
+    <string name="gps_based">GPS Based</string>
+    <string name="map_based">Map Based</string>
+    <string name="ultra_violet">UV</string>
+    <string name="pressure">Pressure</string>
+    <string name="visiblity">Visiblity</string>
+    <string name="today">Today</string>
+    <string name="temperature_unit">Temperature Unit</string>
+    <string name="celsius_unit">°C</string>
+    <string name="kelvin_unit">K</string>
+    <string name="fahrenheit_unit">°F</string>
+    <string name="mile_h">mile/h</string>
+    <string name="metre_s">metre/s</string>
+    <string name="meter">m</string>
+    <string name="hpa">hPa</string>
 
 </resources>

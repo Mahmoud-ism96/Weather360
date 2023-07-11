@@ -11,7 +11,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.weather360.R
 import com.example.weather360.databinding.HourlyItemBinding
 import com.example.weather360.model.Hourly
-import com.example.weather360.util.CommonUtils
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LANGUAGE
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_TEMP_UNIT
+import com.example.weather360.util.CommonUtils.Companion.LANG_VALUE_AR
+import com.example.weather360.util.CommonUtils.Companion.LANG_VALUE_EN
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_CELSIUS
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_FAHRENHEIT
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_KELVIN
 import com.example.weather360.util.CommonUtils.Companion.fromUnixToTime
 import com.example.weather360.util.SharedPreferencesSingleton
 
@@ -32,22 +38,27 @@ class HomeAdapter(private val context: Context) :
         val currentItem = getItem(position)
 
         holder.binding.apply {
-            tvHourlyTime.text = fromUnixToTime(currentItem.dt)
+            val language = when (SharedPreferencesSingleton.readString(KEY_SELECTED_LANGUAGE, LANG_VALUE_EN)) {
+                LANG_VALUE_EN -> "en"
+                LANG_VALUE_AR -> "ar"
+                else -> "en"
+            }
+            tvHourlyTime.text = fromUnixToTime(currentItem.dt,language)
             when (SharedPreferencesSingleton.readString(
-                CommonUtils.KEY_SELECTED_TEMP_UNIT, context.getString(R.string.celsius)
+                KEY_SELECTED_TEMP_UNIT, TEMP_VALUE_CELSIUS
             )) {
-                context.getString(R.string.celsius) -> {
+                TEMP_VALUE_CELSIUS -> {
                     tvHourlyTemp.text =
-                        (currentItem.temp - 273.15).toInt().toString() + "°C"
+                        (currentItem.temp - 273.15).toInt().toString() + context.getString(R.string.celsius_unit)
                 }
 
-                context.getString(R.string.kelvin) -> {
-                    tvHourlyTemp.text = currentItem.temp.toInt().toString() + " K"
+               TEMP_VALUE_KELVIN -> {
+                    tvHourlyTemp.text = currentItem.temp.toInt().toString() + " " + context.getString(R.string.kelvin_unit)
                 }
 
-                context.getString(R.string.fahrenheit) -> {
+                TEMP_VALUE_FAHRENHEIT -> {
                     tvHourlyTemp.text =
-                        ((currentItem.temp - 273.15) * 9 / 5 + 32).toInt().toString() + "°F"
+                        ((currentItem.temp - 273.15) * 9 / 5 + 32).toInt().toString() + context.getString(R.string.fahrenheit_unit)
                 }
             }
             Glide.with(context)

@@ -32,11 +32,21 @@ import com.example.weather360.model.Forecast
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
 import com.example.weather360.network.ApiStatus
-import com.example.weather360.util.CommonUtils
 import com.example.weather360.util.CommonUtils.Companion.KEY_CURRENT_LAT
 import com.example.weather360.util.CommonUtils.Companion.KEY_CURRENT_LONG
 import com.example.weather360.util.CommonUtils.Companion.KEY_FIRST_STARTUP
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LANGUAGE
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LOCATION
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_TEMP_UNIT
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_WIND_SPEED
+import com.example.weather360.util.CommonUtils.Companion.LANG_VALUE_EN
+import com.example.weather360.util.CommonUtils.Companion.LOC_VALUE_GPS
+import com.example.weather360.util.CommonUtils.Companion.LOC_VALUE_MAP
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_CELSIUS
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_FAHRENHEIT
+import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_KELVIN
+import com.example.weather360.util.CommonUtils.Companion.WIND_VALUE_METER
+import com.example.weather360.util.CommonUtils.Companion.WIND_VALUE_MILE
 import com.example.weather360.util.CommonUtils.Companion.capitalizeWords
 import com.example.weather360.util.CommonUtils.Companion.checkConnectivity
 import com.example.weather360.util.CommonUtils.Companion.fromUnixToString
@@ -65,6 +75,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var fusedClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+
+    private lateinit var language : String
 
     private var lastLongitude by Delegates.notNull<Double>()
     private var lastLatitude by Delegates.notNull<Double>()
@@ -100,8 +112,6 @@ class HomeFragment : Fragment() {
 
         _viewModel = ViewModelProvider(this, _viewModelFactory)[HomeViewModel::class.java]
 
-        SharedPreferencesSingleton.initialize(requireContext())
-
         initRecyclerView()
 
         initAPIRequest()
@@ -112,13 +122,13 @@ class HomeFragment : Fragment() {
             startUpDialog()
 
             SharedPreferencesSingleton.writeString(
-                CommonUtils.KEY_SELECTED_TEMP_UNIT, getString(R.string.celsius)
+                KEY_SELECTED_TEMP_UNIT, TEMP_VALUE_CELSIUS
             )
             SharedPreferencesSingleton.writeString(
-                CommonUtils.KEY_SELECTED_WIND_SPEED, getString(R.string.meter_sec)
+                KEY_SELECTED_WIND_SPEED, WIND_VALUE_METER
             )
             SharedPreferencesSingleton.writeString(
-                CommonUtils.KEY_SELECTED_LANGUAGE, getString(R.string.english)
+                KEY_SELECTED_LANGUAGE, LANG_VALUE_EN
             )
 
         } else {
@@ -131,31 +141,33 @@ class HomeFragment : Fragment() {
     private fun requestForecast() {
         favLocation = HomeFragmentArgs.fromBundle(requireArguments()).favLocation
 
+        language = SharedPreferencesSingleton.readString(KEY_SELECTED_LANGUAGE, LANG_VALUE_EN)
+
         if (checkConnectivity(requireActivity())) {
             if (favLocation == null) {
                 when (SharedPreferencesSingleton.readString(
-                    KEY_SELECTED_LOCATION, getString(R.string.gps)
+                    KEY_SELECTED_LOCATION, LOC_VALUE_GPS
                 )) {
-                    getString(R.string.gps) -> {
+                    LOC_VALUE_GPS -> {
                         if (checkLocationPermission()) {
                             getLastLocation()
                         }
                     }
 
-                    getString(R.string.map) -> {
+                    LOC_VALUE_MAP -> {
                         val currentLatitude =
                             SharedPreferencesSingleton.readFloat(KEY_CURRENT_LAT, 0.0f).toDouble()
                         val currentLongitude =
                             SharedPreferencesSingleton.readFloat(KEY_CURRENT_LONG, 0.0f).toDouble()
                         Log.i("TAG", "requestForecast: $currentLatitude $currentLongitude")
-                        _viewModel.getForecast(currentLatitude, currentLongitude)
+                        _viewModel.getForecast(currentLatitude, currentLongitude,language)
                     }
                 }
             } else {
                 (requireActivity() as MainActivity).updateVisiblityOnNavigation(
                     View.GONE, View.VISIBLE
                 )
-                _viewModel.getForecast(favLocation!!.latitude, favLocation!!.longitude)
+                _viewModel.getForecast(favLocation!!.latitude, favLocation!!.longitude,language)
             }
         } else {
             val cachedForecast = readCache(requireContext())
@@ -183,7 +195,7 @@ class HomeFragment : Fragment() {
             override fun onLocationResult(locationResult: LocationResult) {
                 lastLatitude = locationResult.lastLocation.latitude
                 lastLongitude = locationResult.lastLocation.longitude
-                _viewModel.getForecast(lastLatitude, lastLongitude)
+                _viewModel.getForecast(lastLatitude, lastLongitude,language)
             }
         }
 
@@ -223,7 +235,7 @@ class HomeFragment : Fragment() {
                         val forecast = it.forecast
                         showData(forecast)
 
-                        if (favLocation == null) writeCache(forecast,requireContext())
+                        if (favLocation == null) writeCache(forecast, requireContext())
 
                         binding.homeShowDaysClick.setOnClickListener {
                             val navigationAction =
@@ -236,6 +248,7 @@ class HomeFragment : Fragment() {
 
                     is ApiStatus.Failure -> Log.i("Main", "Error: ${it.err}")
                     else -> {
+                        //TODO: Handle Else
                         Log.i("Main", "No Response")
                     }
                 }
@@ -255,7 +268,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun isFirstStartUp(): Boolean {
-        return SharedPreferencesSingleton.readBoolean(getString(R.string.first_startup), true)
+        return SharedPreferencesSingleton.readBoolean(KEY_FIRST_STARTUP, true)
     }
 
     private fun showData(forecast: Forecast) {
@@ -284,48 +297,58 @@ class HomeFragment : Fragment() {
 
             val cityName: List<String> = forecast.timezone.split("/")
             tvCityName.text = cityName[1]
-            tvHomeCurrentDate.text = fromUnixToString(forecast.current.dt)
+            tvHomeCurrentDate.text = fromUnixToString(forecast.current.dt,language)
 
             when (SharedPreferencesSingleton.readString(
-                CommonUtils.KEY_SELECTED_TEMP_UNIT, getString(R.string.celsius)
+                KEY_SELECTED_TEMP_UNIT, TEMP_VALUE_CELSIUS
             )) {
-                getString(R.string.celsius) -> {
+                TEMP_VALUE_CELSIUS -> {
                     tvHomeTemp.text = (forecast.current.temp - 273.15).toInt().toString()
-                    tvHomeFeelsLike.text = ("/${(forecast.current.feels_like - 273.15).toInt()}°C")
+                    tvHomeFeelsLike.text =
+                        ("/${(forecast.current.feels_like - 273.15).toInt()}" + getString(
+                            R.string.celsius_unit
+                        ))
                 }
 
-                getString(R.string.kelvin) -> {
+                TEMP_VALUE_KELVIN -> {
                     tvHomeTemp.text = forecast.current.temp.toInt().toString()
-                    tvHomeFeelsLike.text = ("/${forecast.current.feels_like.toInt()} K")
+                    tvHomeFeelsLike.text =
+                        ("/${forecast.current.feels_like.toInt()} " + getString(R.string.kelvin_unit))
                 }
 
-                getString(R.string.fahrenheit) -> {
+                TEMP_VALUE_FAHRENHEIT -> {
                     tvHomeTemp.text =
                         ((forecast.current.temp - 273.15) * 9 / 5 + 32).toInt().toString()
                     tvHomeFeelsLike.text =
-                        ("/${((forecast.current.feels_like - 273.15) * 9 / 5 + 32).toInt()}°F")
+                        ("/${((forecast.current.feels_like - 273.15) * 9 / 5 + 32).toInt()}" + getString(
+                            R.string.fahrenheit_unit
+                        ))
                 }
             }
 
             tvHomeTempStatus.text = capitalizeWords(forecast.current.weather[0].description)
 
             when (SharedPreferencesSingleton.readString(
-                CommonUtils.KEY_SELECTED_WIND_SPEED, getString(R.string.meter_sec)
+                KEY_SELECTED_WIND_SPEED, WIND_VALUE_METER
             )) {
-                getString(R.string.miles_hour) -> {
-                    tvHomeWind.text = "${(forecast.current.wind_speed * 2.23694).toInt()} mile/h"
+                WIND_VALUE_MILE -> {
+                    tvHomeWind.text =
+                        "${(forecast.current.wind_speed * 2.23694).toInt()} " + getString(
+                            R.string.mile_h
+                        )
                 }
 
-                getString(R.string.meter_sec) -> {
-                    tvHomeWind.text = "${forecast.current.wind_speed.toInt()} metre/s"
+                WIND_VALUE_METER -> {
+                    tvHomeWind.text =
+                        "${forecast.current.wind_speed.toInt()} " + getString(R.string.metre_s)
                 }
             }
 
             tvHomeHumidity.text = ("${forecast.current.humidity} %")
             tvHomeCloud.text = ("${forecast.current.clouds} %")
             tvHomeUv.text = forecast.current.uvi.toString()
-            tvHomePressure.text = ("${forecast.current.pressure} hPa")
-            tvHomeVisibity.text = ("${forecast.current.visibility} m")
+            tvHomePressure.text = ("${forecast.current.pressure} " + getString(R.string.hpa))
+            tvHomeVisibity.text = ("${forecast.current.visibility} " + getString(R.string.meter))
         }
     }
 
@@ -351,7 +374,7 @@ class HomeFragment : Fragment() {
                 rb_GPS.isChecked -> {
                     SharedPreferencesSingleton.writeBoolean(KEY_FIRST_STARTUP, false)
                     SharedPreferencesSingleton.writeString(
-                        KEY_SELECTED_LOCATION, getString(R.string.gps)
+                        KEY_SELECTED_LOCATION, LOC_VALUE_GPS
                     )
                     requestForecast()
                 }
@@ -359,7 +382,7 @@ class HomeFragment : Fragment() {
                 rb_Map.isChecked -> {
                     SharedPreferencesSingleton.writeBoolean(KEY_FIRST_STARTUP, false)
                     SharedPreferencesSingleton.writeString(
-                        KEY_SELECTED_LOCATION, getString(R.string.map)
+                        KEY_SELECTED_LOCATION, LOC_VALUE_MAP
                     )
                     val navigationAction = HomeFragmentDirections.actionNavHomeToMapsFragment(
                         MapSelectionType.CURRENT_LOCATION

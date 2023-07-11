@@ -10,6 +10,10 @@ import androidx.core.app.NotificationCompat
 import com.example.weather360.R
 import com.example.weather360.db.ConcreteLocalSource
 import com.example.weather360.network.ApiClient
+import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LANGUAGE
+import com.example.weather360.util.CommonUtils.Companion.LANG_VALUE_AR
+import com.example.weather360.util.CommonUtils.Companion.LANG_VALUE_EN
+import com.example.weather360.util.SharedPreferencesSingleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -32,7 +36,14 @@ class AlarmReceiver : BroadcastReceiver() {
         val notificationManager = context.getSystemService(NotificationManager::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val forecast = ApiClient.getForecast(latitude, longitude)
+
+            val language = when (SharedPreferencesSingleton.readString(KEY_SELECTED_LANGUAGE, LANG_VALUE_EN)) {
+                LANG_VALUE_EN -> "en"
+                LANG_VALUE_AR -> "ar"
+                else -> "en"
+            }
+
+            val forecast = ApiClient.getForecast(latitude, longitude,language)
 
             forecast.collectLatest {
                 description = it.alerts?.get(0)?.description

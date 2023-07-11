@@ -16,7 +16,7 @@
             android:id="@+id/tv_startup_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Setup Location"
+            android:text="@string/setup_location"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -37,13 +37,13 @@
                 android:id="@+id/rb_gps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="GPS Based" />
+                android:text="@string/gps_based" />
 
             <RadioButton
                 android:id="@+id/rb_map"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Map Based" />
+                android:text="@string/map_based" />
         </RadioGroup>
 
         <Button

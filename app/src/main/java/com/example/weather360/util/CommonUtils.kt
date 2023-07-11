@@ -27,23 +27,36 @@ class CommonUtils {
         const val KEY_CURRENT_LAT = "current_lat"
         const val KEY_CURRENT_LONG = "current_long"
 
-        fun getDayOfWeek(timestamp: Long): String {
+        const val LOC_VALUE_GPS = "GPS"
+        const val LOC_VALUE_MAP = "MAP"
+
+        const val TEMP_VALUE_CELSIUS = "CELSIUS"
+        const val TEMP_VALUE_KELVIN = "KELVIN"
+        const val TEMP_VALUE_FAHRENHEIT = "FAHRENHEIT"
+
+        const val WIND_VALUE_METER = "METER"
+        const val WIND_VALUE_MILE = "MILE"
+
+        const val LANG_VALUE_EN = "EN"
+        const val LANG_VALUE_AR = "AR"
+
+        fun getDayOfWeek(timestamp: Long,language : String): String {
             val date = Date(timestamp * 1000L)
 
-            val sdf = SimpleDateFormat("EE", Locale.getDefault())
+            val sdf = SimpleDateFormat("EE", Locale(language))
             return sdf.format(date)
         }
 
-        fun fromUnixToString(time: Long): String {
-            val simpleDateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
+        fun fromUnixToString(time: Long,language: String): String {
+            val simpleDateFormat = SimpleDateFormat("MMM dd, yyyy", Locale(language))
             val date = Date(time * 1000L)
-            return simpleDateFormat.format(date).uppercase(Locale.ROOT)
+            return simpleDateFormat.format(date).uppercase(Locale(language))
         }
 
-        fun fromUnixToTime(time: Long): String {
-            val simpleDateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        fun fromUnixToTime(time: Long, language: String): String {
+            val simpleDateFormat = SimpleDateFormat("h:mm a", Locale(language))
             val date = Date(time * 1000L)
-            return simpleDateFormat.format(date).uppercase(Locale.ROOT)
+            return simpleDateFormat.format(date).uppercase(Locale(language))
         }
 
         fun capitalizeWords(description: String): String {

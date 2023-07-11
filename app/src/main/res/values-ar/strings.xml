@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">Weather360</string>
+    <string name="action_settings">الإعدادات</string>
+
+    <string name="menu_home">الصفحة الرئيسية</string>
+    <string name="menu_favorite">المفضلة</string>
+    <string name="menu_alert">التنبيه</string>
+    <string name="menu_settings">الإعدادات</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">مرحبًا بك في شاشة فارغة</string>
+    <string name="cancel">إلغاء</string>
+
+    <!-- Settings -->
+    <string name="location">الموقع</string>
+    <string name="map">الخريطة</string>
+    <string name="gps">نظام تحديد المواقع</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="kelvin">كلفن</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="celsius">مئوية</string>
+    <string name="meter_sec">متر/ثانية</string>
+    <string name="miles_hour">ميل/ساعة</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="wind_speed_unit">وحدة سرعة الرياح</string>
+    <string name="language">اللغة</string>
+    <string name="_7_days">7 أيام</string>
+    <string name="tomorrow">غدًا</string>
+    <string name="wind">الرياح</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="cloud">السحب</string>
+    <string name="save_location">حفظ الموقع</string>
+    <string name="location_type">نوع الموقع</string>
+    <string name="weather_360">الطقس 360</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="sure">متأكد</string>
+    <string name="remove_alert">إزالة التنبيه</string>
+    <string name="remove_alert_dialog_message">هل تريد بالتأكيد إزالة هذا التنبيه؟</string>
+    <string name="delete_favorite_location">حذف الموقع المفضل</string>
+    <string name="remove_location_dialog_message">هل تريد بالتأكيد إزالة هذا الموقع من المفضلة؟</string>
+    <string name="set_alarm">تعيين التنبيه</string>
+    <string name="ok">موافق</string>
+    <string name="setup_location">إعداد الموقع</string>
+    <string name="gps_based">بناءً على نظام تحديد المواقع</string>
+    <string name="map_based">بناءً على الخريطة</string>
+    <string name="ultra_violet">اشعة بنفسجية</string>
+    <string name="pressure">الضغط الجوي</string>
+    <string name="visiblity">الرؤية</string>
+    <string name="today">اليوم</string>
+    <string name="temperature_unit">وحدة درجة الحرارة</string>
+    <string name="celsius_unit">°م</string>
+    <string name="kelvin_unit">ك</string>
+    <string name="fahrenheit_unit">°ف</string>
+    <string name="mile_h">ميل/ساعة</string>
+    <string name="metre_s">متر/ثانية</string>
+    <string name="meter">متر</string>
+    <string name="hpa">هـ.ب</string>
+</resources>
