@@ -10,12 +10,19 @@ import java.util.Calendar
 
 object AlarmUtils {
 
-    fun setAlarm(context: Context, timeInMillis: Long, requestCode: Int, cachedForecast: Forecast) {
+    fun setAlarm(
+        context: Context,
+        timeInMillis: Long,
+        requestCode: Int,
+        cachedForecast: Forecast,
+        type: String
+    ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("id", requestCode)
             putExtra("latitude", cachedForecast.lat)
             putExtra("longitude", cachedForecast.lon)
+            putExtra("type",type)
         }.let { intent ->
             PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
         }

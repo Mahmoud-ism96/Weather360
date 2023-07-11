@@ -39,6 +39,7 @@ import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LANGUAGE
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_LOCATION
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_TEMP_UNIT
 import com.example.weather360.util.CommonUtils.Companion.KEY_SELECTED_WIND_SPEED
+import com.example.weather360.util.CommonUtils.Companion.LANG_VALUE_AR
 import com.example.weather360.util.CommonUtils.Companion.LANG_VALUE_EN
 import com.example.weather360.util.CommonUtils.Companion.LOC_VALUE_GPS
 import com.example.weather360.util.CommonUtils.Companion.LOC_VALUE_MAP
@@ -76,7 +77,7 @@ class HomeFragment : Fragment() {
     private lateinit var fusedClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
 
-    private lateinit var language : String
+    private lateinit var language: String
 
     private var lastLongitude by Delegates.notNull<Double>()
     private var lastLatitude by Delegates.notNull<Double>()
@@ -160,14 +161,14 @@ class HomeFragment : Fragment() {
                         val currentLongitude =
                             SharedPreferencesSingleton.readFloat(KEY_CURRENT_LONG, 0.0f).toDouble()
                         Log.i("TAG", "requestForecast: $currentLatitude $currentLongitude")
-                        _viewModel.getForecast(currentLatitude, currentLongitude,language)
+                        _viewModel.getForecast(currentLatitude, currentLongitude, language)
                     }
                 }
             } else {
                 (requireActivity() as MainActivity).updateVisiblityOnNavigation(
                     View.GONE, View.VISIBLE
                 )
-                _viewModel.getForecast(favLocation!!.latitude, favLocation!!.longitude,language)
+                _viewModel.getForecast(favLocation!!.latitude, favLocation!!.longitude, language)
             }
         } else {
             val cachedForecast = readCache(requireContext())
@@ -195,7 +196,7 @@ class HomeFragment : Fragment() {
             override fun onLocationResult(locationResult: LocationResult) {
                 lastLatitude = locationResult.lastLocation.latitude
                 lastLongitude = locationResult.lastLocation.longitude
-                _viewModel.getForecast(lastLatitude, lastLongitude,language)
+                _viewModel.getForecast(lastLatitude, lastLongitude, language)
             }
         }
 
@@ -297,7 +298,7 @@ class HomeFragment : Fragment() {
 
             val cityName: List<String> = forecast.timezone.split("/")
             tvCityName.text = cityName[1]
-            tvHomeCurrentDate.text = fromUnixToString(forecast.current.dt,language)
+            tvHomeCurrentDate.text = fromUnixToString(forecast.current.dt, language)
 
             when (SharedPreferencesSingleton.readString(
                 KEY_SELECTED_TEMP_UNIT, TEMP_VALUE_CELSIUS
@@ -349,6 +350,16 @@ class HomeFragment : Fragment() {
             tvHomeUv.text = forecast.current.uvi.toString()
             tvHomePressure.text = ("${forecast.current.pressure} " + getString(R.string.hpa))
             tvHomeVisibity.text = ("${forecast.current.visibility} " + getString(R.string.meter))
+        }
+
+
+        when (language) {
+            LANG_VALUE_EN -> {
+                binding.ivHomeArrow.rotationY = 0F
+            }
+            LANG_VALUE_AR -> {
+                binding.ivHomeArrow.rotationY = 180F
+            }
         }
     }
 

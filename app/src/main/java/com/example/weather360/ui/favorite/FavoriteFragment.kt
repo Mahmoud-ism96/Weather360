@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
 import com.example.weather360.util.CommonUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
 class FavoriteFragment : Fragment() {
 
@@ -74,8 +76,10 @@ class FavoriteFragment : Fragment() {
             }
         }
 
-        _viewModel.locations.observe(requireActivity()) {
-            recyclerAdapter.submitList(it)
+        lifecycleScope.launch {
+            _viewModel.locations.collect { locations ->
+                recyclerAdapter.submitList(locations)
+            }
         }
 
         return root

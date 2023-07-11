@@ -61,5 +61,12 @@
     <string name="metre_s">metre/s</string>
     <string name="meter">m</string>
     <string name="hpa">hPa</string>
+    <string name="notification">Notification</string>
+    <string name="alarm">Alarm</string>
+    <string name="weather_is_fine">Weather is fine</string>
+    <string name="no_forecast_data_please_enable_your_internet">No forecast data, please enable your internet</string>
+    <string name="select_date">Select date</string>
+    <string name="select_appointment_time">Select Appointment time</string>
+    <string name="please_allow_display_over_other_apps">Please allow \"Display over other apps\"</string>
 
 </resources>

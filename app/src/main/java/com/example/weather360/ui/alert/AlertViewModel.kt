@@ -1,18 +1,19 @@
 package com.example.weather360.ui.alert
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather360.model.AlertForecast
 import com.example.weather360.model.RepositoryInterface
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class AlertViewModel(private val _repo: RepositoryInterface) : ViewModel() {
-    private val _alerts= MutableLiveData<List<AlertForecast>>()
-    val alerts: LiveData<List<AlertForecast>>
+    private val _alerts: MutableStateFlow<List<AlertForecast>> = MutableStateFlow(emptyList())
+    val alerts: StateFlow<List<AlertForecast>>
         get() = _alerts
+
 
     init {
         getStoredAlerts()
@@ -20,8 +21,8 @@ class AlertViewModel(private val _repo: RepositoryInterface) : ViewModel() {
 
     private fun getStoredAlerts() {
         viewModelScope.launch(Dispatchers.IO) {
-            _repo.getStoredAlertForecasts().collect() {
-                _alerts.postValue(it)
+            _repo.getStoredAlertForecasts().collect { alerts ->
+                _alerts.emit(alerts)
             }
         }
     }

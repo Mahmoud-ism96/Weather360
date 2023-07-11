@@ -2,15 +2,22 @@ package com.example.weather360.ui.alert
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather360.R
@@ -77,8 +84,10 @@ class AlertFragment : Fragment() {
             }
         }
 
-        _viewModel.alerts.observe(requireActivity()) {
-            recyclerAdapter.submitList(it)
+        lifecycleScope.launch {
+            _viewModel.alerts.collect { alerts ->
+                recyclerAdapter.submitList(alerts)
+            }
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -98,6 +107,11 @@ class AlertFragment : Fragment() {
             val tv_timePicker = dialog.findViewById<TextView>(R.id.tv_alert_time)
             val btn_ok = dialog.findViewById<TextView>(R.id.btn_alert_ok)
             val btn_cancel = dialog.findViewById<TextView>(R.id.btn_alert_cancel)
+
+            val rb_notification = dialog.findViewById<RadioButton>(R.id.rb_alert_notification)
+            val rb_alarm = dialog.findViewById<RadioButton>(R.id.rb_alert_alarm)
+
+            rb_notification.isChecked = true
 
             var timeSelected = ""
             var dateSelected = ""
@@ -119,13 +133,14 @@ class AlertFragment : Fragment() {
 
                 val picker =
                     MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).setHour(hour)
-                        .setMinute(minute).setTitleText("Select Appointment time").build()
+                        .setMinute(minute).setTitleText(getString(R.string.select_appointment_time)).build()
 
                 picker.show(parentFragmentManager, "TIME")
 
                 picker.addOnPositiveButtonClickListener {
                     alertTime.set(Calendar.HOUR_OF_DAY, picker.hour)
                     alertTime.set(Calendar.MINUTE, picker.minute)
+                    alertTime.set(Calendar.SECOND, 0)
                     timeSelected =
                         SimpleDateFormat("hh:mm a", Locale.getDefault()).format(alertTime.time)
                     tv_timePicker.text = timeSelected
@@ -135,7 +150,7 @@ class AlertFragment : Fragment() {
 
             tv_datePicker.setOnClickListener {
 
-                val picker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date")
+                val picker = MaterialDatePicker.Builder.datePicker().setTitleText(getString(R.string.select_date))
                     .setSelection(alertTime.timeInMillis).build()
                 picker.show(parentFragmentManager, "DATE")
 
@@ -189,13 +204,55 @@ class AlertFragment : Fragment() {
                             cachedForecast.lat
                         )
 
-                        _viewModel.insertAlert(alertForecast)
+                        when {
+                            rb_notification.isChecked -> {
+                                _viewModel.insertAlert(alertForecast)
 
-                        AlarmUtils.setAlarm(
-                            requireContext(), alertTime.timeInMillis, requestCode, cachedForecast
-                        )
+                                AlarmUtils.setAlarm(
+                                    requireContext(),
+                                    alertTime.timeInMillis,
+                                    requestCode,
+                                    cachedForecast,
+                                    "notification"
+                                )
+                                dialog.dismiss()
+                            }
 
-                        dialog.dismiss()
+                            rb_alarm.isChecked -> {
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
+                                        requireContext()
+                                    )
+                                ) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        getString(R.string.please_allow_display_over_other_apps),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                                    intent.data =
+                                        Uri.parse("package:" + requireActivity().packageName)
+
+                                } else {
+                                    _viewModel.insertAlert(alertForecast)
+
+                                    AlarmUtils.setAlarm(
+                                        requireContext(),
+                                        alertTime.timeInMillis,
+                                        requestCode,
+                                        cachedForecast,
+                                        "alarm"
+                                    )
+                                    dialog.dismiss()
+                                }
+                            }
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.no_forecast_data_please_enable_your_internet),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -209,14 +266,16 @@ class AlertFragment : Fragment() {
     }
 
     private fun removeAlertDialog(context: Context, alertForecast: AlertForecast) {
-        MaterialAlertDialogBuilder(context).setTitle(getString(R.string.remove_alert)).setMessage(getString(
-                    R.string.remove_alert_dialog_message))
-            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, which ->
-                // Respond to neutral button press
-            }.setPositiveButton(getString(R.string.sure)) { dialog, which ->
-                _viewModel.deleteAlert(alertForecast)
-                cancelAlarm(context, alertForecast.id)
-            }.show()
+        MaterialAlertDialogBuilder(context).setTitle(getString(R.string.remove_alert)).setMessage(
+            getString(
+                R.string.remove_alert_dialog_message
+            )
+        ).setNeutralButton(resources.getString(R.string.cancel)) { dialog, which ->
+            // Respond to neutral button press
+        }.setPositiveButton(getString(R.string.sure)) { dialog, which ->
+            _viewModel.deleteAlert(alertForecast)
+            cancelAlarm(context, alertForecast.id)
+        }.show()
     }
 
     override fun onDestroyView() {
