@@ -62,7 +62,6 @@ class FavoriteViewModelTest {
         }
 
         //THEN
-
         assertNull(result)
     }
 }

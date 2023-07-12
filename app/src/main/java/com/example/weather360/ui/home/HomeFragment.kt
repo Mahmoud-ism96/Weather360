@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -59,8 +60,10 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
 
 
@@ -88,7 +91,11 @@ class HomeFragment : Fragment() {
         if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
             getLastLocation()
         } else {
-            //TODO: handle the ELSE
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.please_allow_the_location_permissions_to_get_current_location),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -119,6 +126,10 @@ class HomeFragment : Fragment() {
 
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
+        binding.btnRetry.setOnClickListener{
+            requestForecast()
+        }
+
         if (isFirstStartUp()) {
             startUpDialog()
 
@@ -145,6 +156,10 @@ class HomeFragment : Fragment() {
         language = SharedPreferencesSingleton.readString(KEY_SELECTED_LANGUAGE, LANG_VALUE_EN)
 
         if (checkConnectivity(requireActivity())) {
+
+            binding.groupLoading.visibility = View.VISIBLE
+            binding.groupRetry.visibility = View.GONE
+
             if (favLocation == null) {
                 when (SharedPreferencesSingleton.readString(
                     KEY_SELECTED_LOCATION, LOC_VALUE_GPS
@@ -160,7 +175,6 @@ class HomeFragment : Fragment() {
                             SharedPreferencesSingleton.readFloat(KEY_CURRENT_LAT, 0.0f).toDouble()
                         val currentLongitude =
                             SharedPreferencesSingleton.readFloat(KEY_CURRENT_LONG, 0.0f).toDouble()
-                        Log.i("TAG", "requestForecast: $currentLatitude $currentLongitude")
                         _viewModel.getForecast(currentLatitude, currentLongitude, language)
                     }
                 }
@@ -175,11 +189,19 @@ class HomeFragment : Fragment() {
             if (cachedForecast != null) {
                 showData(cachedForecast)
 
+                binding.groupLoading.visibility = View.GONE
+                binding.groupRetry.visibility = View.GONE
+                binding.groupData.visibility = View.VISIBLE
+
                 binding.homeShowDaysClick.setOnClickListener {
                     val navigationAction =
                         HomeFragmentDirections.actionNavHomeToWeeklyFragment(cachedForecast)
                     findNavController().navigate(navigationAction)
                 }
+            } else {
+                binding.groupRetry.visibility = View.VISIBLE
+
+                Toast.makeText(requireContext(),getString(R.string.failed_to_retrieve_data),Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -236,6 +258,11 @@ class HomeFragment : Fragment() {
                         val forecast = it.forecast
                         showData(forecast)
 
+                        withContext(Dispatchers.Main) {
+                            binding.groupLoading.visibility = View.GONE
+                            binding.groupData.visibility = View.VISIBLE
+                        }
+
                         if (favLocation == null) writeCache(forecast, requireContext())
 
                         binding.homeShowDaysClick.setOnClickListener {
@@ -249,8 +276,7 @@ class HomeFragment : Fragment() {
 
                     is ApiStatus.Failure -> Log.i("Main", "Error: ${it.err}")
                     else -> {
-                        //TODO: Handle Else
-                        Log.i("Main", "No Response")
+
                     }
                 }
             }
@@ -357,6 +383,7 @@ class HomeFragment : Fragment() {
             LANG_VALUE_EN -> {
                 binding.ivHomeArrow.rotationY = 0F
             }
+
             LANG_VALUE_AR -> {
                 binding.ivHomeArrow.rotationY = 180F
             }

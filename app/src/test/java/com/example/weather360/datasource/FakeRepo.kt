@@ -28,7 +28,7 @@ class FakeRepo(
     }
 
     override suspend fun deleteLocation(favoriteLocation: FavoriteLocation) {
-        TODO("Not yet implemented")
+        favLocations.remove(favoriteLocation)
     }
 
     override suspend fun insertAlertForecast(alertForecast: AlertForecast) {

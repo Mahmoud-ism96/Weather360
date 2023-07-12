@@ -17,6 +17,7 @@
             android:backgroundTint="#00FFFFFF"
             android:backgroundTintMode="add"
             android:src="@drawable/location_pin2"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/tv_city_name"
             app:layout_constraintEnd_toStartOf="@+id/tv_city_name"
             app:layout_constraintHorizontal_bias="0.5"
@@ -32,17 +33,19 @@
             android:textColor="#000000"
             android:textSize="32sp"
             android:textStyle="bold"
+            android:visibility="visible"
             app:layout_anchorGravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageView4"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Cairo" />
+            android:text="@string/home" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_main"
             android:layout_width="200dp"
             android:layout_height="200dp"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_home_current_date"
@@ -57,6 +60,7 @@
             android:includeFontPadding="false"
             android:textColor="#000000"
             android:textSize="84sp"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lottie_main"
@@ -67,6 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="12dp"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_home_temp_status">
@@ -373,6 +378,7 @@
             android:text="@string/today"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
@@ -385,6 +391,7 @@
             android:clipChildren="false"
             android:clipToPadding="false"
             android:orientation="horizontal"
+            android:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -398,6 +405,7 @@
             android:layout_height="wrap_content"
             android:textColor="#80000000"
             android:textSize="24sp"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_home_temp"
@@ -410,6 +418,7 @@
             android:layout_marginBottom="18dp"
             android:textColor="#80000000"
             android:textSize="28sp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/tv_home_temp"
             app:layout_constraintStart_toEndOf="@+id/tv_home_temp"
             tools:text="/20° C" />
@@ -420,6 +429,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="#80000000"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="@+id/tv_city_name"
             app:layout_constraintStart_toStartOf="@+id/imageView4"
             app:layout_constraintTop_toBottomOf="@+id/tv_city_name"
@@ -437,6 +447,7 @@
             android:orientation="horizontal"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/textView12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView12">
@@ -459,6 +470,100 @@
                 app:tint="#80000000" />
         </LinearLayout>
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="tv_home_current_date,tv_home_temp_status,tv_home_temp,tv_home_feels_like,lottie_main,rv_home_hourly,home_show_days_click,constraintLayout,textView12" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/loading"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lottie_loading" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="textView3,lottie_loading" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_loading"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="128dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_data" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="materialCardView7" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="36dp"
+            app:contentPadding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_city_name">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/no_internet_connection"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_retry"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_retry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    android:text="@string/retry"
+                    app:iconPadding="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/textView4"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

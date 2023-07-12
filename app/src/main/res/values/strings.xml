@@ -68,5 +68,12 @@
     <string name="select_date">Select date</string>
     <string name="select_appointment_time">Select Appointment time</string>
     <string name="please_allow_display_over_other_apps">Please allow \"Display over other apps\"</string>
+    <string name="loading">Loading</string>
+    <string name="home">Home</string>
+    <string name="please_enable_your_internet_to_retrieve_the_data">Please enable your internet to retrieve the data</string>
+    <string name="retry">Retry</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="please_allow_the_location_permissions_to_get_current_location">Please allow the location permissions to get current location</string>
+    <string name="failed_to_retrieve_data">Failed to retrieve data</string>
 
 </resources>

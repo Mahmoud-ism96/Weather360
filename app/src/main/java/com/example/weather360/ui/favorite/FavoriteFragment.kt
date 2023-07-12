@@ -20,6 +20,7 @@ import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
 import com.example.weather360.util.CommonUtils
+import com.example.weather360.util.CommonUtils.Companion.checkConnectivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
@@ -62,9 +63,17 @@ class FavoriteFragment : Fragment() {
         }
 
         recyclerAdapter = FavoriteAdapter({
-            val navigationAction =
-                FavoriteFragmentDirections.actionNavFavoriteToNavHome(favLocation = it)
-            findNavController().navigate(navigationAction)
+            if (checkConnectivity(requireActivity())) {
+                val navigationAction =
+                    FavoriteFragmentDirections.actionNavFavoriteToNavHome(favLocation = it)
+                findNavController().navigate(navigationAction)
+            }else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.please_enable_your_internet_to_retrieve_the_data),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }, {
             removeLocationDialog(requireContext(), it)
         })
@@ -86,9 +95,12 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun removeLocationDialog(context: Context, favoriteLocation: FavoriteLocation) {
-        MaterialAlertDialogBuilder(context).setTitle(getString(R.string.delete_favorite_location)).setMessage(getString(
-                    R.string.remove_location_dialog_message))
-            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, which ->
+        MaterialAlertDialogBuilder(context).setTitle(getString(R.string.delete_favorite_location))
+            .setMessage(
+                getString(
+                    R.string.remove_location_dialog_message
+                )
+            ).setNeutralButton(resources.getString(R.string.cancel)) { dialog, which ->
                 // Respond to neutral button press
             }.setPositiveButton(getString(R.string.sure)) { dialog, which ->
                 _viewModel.removeFromFav(favoriteLocation)

@@ -28,8 +28,6 @@ class RepositoryTest {
         id = 3, time = "09:15 AM", date = "2023-07-11", longitude = 30.8027, latitude = 28.4973
     )
 
-    val favoriteLocations = listOf(location1, location2, location3)
-    val alertForecasts = listOf(alertForecast1, alertForecast2, alertForecast3)
     val forecast = Forecast(
         Current(
             dt = 1689105971,
