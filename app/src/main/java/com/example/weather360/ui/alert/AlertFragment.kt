@@ -196,7 +196,7 @@ class AlertFragment : Fragment() {
                                 )
                         }
 
-                        val alertForecast = AlertForecast(
+                        var alertForecast = AlertForecast(
                             requestCode,
                             timeSelected,
                             dateSelected,
@@ -206,6 +206,30 @@ class AlertFragment : Fragment() {
 
                         when {
                             rb_notification.isChecked -> {
+
+                                var currentTimeMillis = Calendar.getInstance().timeInMillis
+
+                                if (alertTime.timeInMillis < currentTimeMillis) {
+                                    currentTimeMillis += (60 * 1000)
+                                    alertTime.timeInMillis = currentTimeMillis
+
+                                    timeSelected =
+                                        SimpleDateFormat("hh:mm a", Locale.getDefault()).format(alertTime.time)
+
+                                    dateSelected =
+                                        SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(
+                                            Calendar.getInstance().time
+                                        )
+
+                                    alertForecast = AlertForecast(
+                                        requestCode,
+                                        timeSelected,
+                                        dateSelected,
+                                        cachedForecast.lon,
+                                        cachedForecast.lat
+                                    )
+                                }
+
                                 _viewModel.insertAlert(alertForecast)
 
                                 AlarmUtils.setAlarm(
@@ -236,6 +260,30 @@ class AlertFragment : Fragment() {
                                     startActivity(intent)
 
                                 } else {
+
+                                    var currentTimeMillis = Calendar.getInstance().timeInMillis
+
+                                    if (alertTime.timeInMillis < currentTimeMillis) {
+                                        currentTimeMillis += (60 * 1000)
+                                        alertTime.timeInMillis = currentTimeMillis
+
+                                        timeSelected =
+                                            SimpleDateFormat("hh:mm a", Locale.getDefault()).format(alertTime.time)
+
+                                        dateSelected =
+                                            SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(
+                                                Calendar.getInstance().time
+                                            )
+
+                                        alertForecast = AlertForecast(
+                                            requestCode,
+                                            timeSelected,
+                                            dateSelected,
+                                            cachedForecast.lon,
+                                            cachedForecast.lat
+                                        )
+                                    }
+
                                     _viewModel.insertAlert(alertForecast)
 
                                     AlarmUtils.setAlarm(

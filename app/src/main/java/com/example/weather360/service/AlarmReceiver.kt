@@ -63,8 +63,9 @@ class AlarmReceiver : BroadcastReceiver() {
                 "notification" -> {
                     withContext(Dispatchers.Main) {
                         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-                            .setSmallIcon(R.drawable.bell).setContentTitle("Alert")
-                            .setContentText(description)
+                            .setSmallIcon(R.drawable.bell).setContentTitle("Alert").setStyle(
+                                NotificationCompat.BigTextStyle().bigText(description)
+                            ).setContentText(description)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT).setAutoCancel(true)
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -94,9 +95,12 @@ class AlarmReceiver : BroadcastReceiver() {
                     alertDialog.setPositiveButton("OK") { _, _ ->
                         mediaPlayer.stop()
                     }
-                    val dialog: AlertDialog = alertDialog.create()
-                    dialog.getWindow()?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-                    dialog.show()
+                    withContext(Dispatchers.Main) {
+                        val dialog: AlertDialog = alertDialog.create()
+                        dialog.getWindow()
+                            ?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                        dialog.show()
+                    }
                 }
             }
         }
