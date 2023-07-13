@@ -233,6 +233,8 @@ class AlertFragment : Fragment() {
                                     intent.data =
                                         Uri.parse("package:" + requireActivity().packageName)
 
+                                    startActivity(intent)
+
                                 } else {
                                     _viewModel.insertAlert(alertForecast)
 

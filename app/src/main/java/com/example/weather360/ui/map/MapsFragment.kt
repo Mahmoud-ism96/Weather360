@@ -16,6 +16,7 @@ import com.example.weather360.model.FavoriteLocation
 import com.example.weather360.model.Repository
 import com.example.weather360.network.ApiClient
 import com.example.weather360.util.CommonUtils
+import com.example.weather360.util.CommonUtils.Companion.checkConnectivity
 import com.example.weather360.util.SharedPreferencesSingleton
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -117,16 +118,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 Locale.getDefault(), "Lat: %1$.5f, Long: %2$.5f", latLng.latitude, latLng.longitude
             )
 
-            val address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-
             countryName = "Unknown"
 
-            if (!address.isNullOrEmpty()) {
-                if (!address[0].adminArea.isNullOrBlank()) countryName = address[0].adminArea + ", "
-                else countryName = "Unknown, "
+            if (checkConnectivity(requireActivity())) {
+                var address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
 
-                if (!address[0].countryName.isNullOrBlank()) countryName += address[0].countryName
-                else countryName = "Unknown"
+                if (!address.isNullOrEmpty()) {
+                    if (!address[0].adminArea.isNullOrBlank()) countryName =
+                        address[0].adminArea + ", "
+                    else countryName = "Unknown, "
+
+                    if (!address[0].countryName.isNullOrBlank()) countryName += address[0].countryName
+                    else countryName = "Unknown"
+                }
             }
             marker = map.addMarker(
                 MarkerOptions().position(latLng).title(countryName).snippet(snippet)

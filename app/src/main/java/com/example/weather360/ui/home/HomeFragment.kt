@@ -158,6 +158,7 @@ class HomeFragment : Fragment() {
         if (checkConnectivity(requireActivity())) {
 
             binding.groupLoading.visibility = View.VISIBLE
+            binding.groupData.visibility = View.GONE
             binding.groupRetry.visibility = View.GONE
 
             if (favLocation == null) {
@@ -188,6 +189,8 @@ class HomeFragment : Fragment() {
             val cachedForecast = readCache(requireContext())
             if (cachedForecast != null) {
                 showData(cachedForecast)
+
+                recyclerAdapter.submitList(cachedForecast.hourly)
 
                 binding.groupLoading.visibility = View.GONE
                 binding.groupRetry.visibility = View.GONE
@@ -272,6 +275,8 @@ class HomeFragment : Fragment() {
                         }
 
                         recyclerAdapter.submitList(it.forecast.hourly)
+
+//                        if (::locationCallback.isInitialized) fusedClient.removeLocationUpdates(locationCallback)
                     }
 
                     is ApiStatus.Failure -> Log.i("Main", "Error: ${it.err}")
@@ -321,6 +326,8 @@ class HomeFragment : Fragment() {
                 "50d" -> lottieMain.setAnimation(R.raw.weather_foggy)
                 "50n" -> lottieMain.setAnimation(R.raw.weather_mist)
             }
+
+            lottieMain.playAnimation()
 
             val cityName: List<String> = forecast.timezone.split("/")
             tvCityName.text = cityName[1]

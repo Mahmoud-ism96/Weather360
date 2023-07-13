@@ -26,8 +26,4 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.Weather360.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.Weather360.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
 </resources>

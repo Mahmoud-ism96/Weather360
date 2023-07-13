@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.weather360.R
@@ -23,6 +24,7 @@ import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_FAHRENHEIT
 import com.example.weather360.util.CommonUtils.Companion.TEMP_VALUE_KELVIN
 import com.example.weather360.util.CommonUtils.Companion.WIND_VALUE_METER
 import com.example.weather360.util.CommonUtils.Companion.WIND_VALUE_MILE
+import com.example.weather360.util.CommonUtils.Companion.checkConnectivity
 import com.example.weather360.util.SharedPreferencesSingleton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -149,19 +151,24 @@ class SettingsFragment : Fragment() {
                 listLocation,
                 selectedLocationItem
             ) { selected ->
-                when (selected) {
-                    getString(R.string.gps) -> selectedLocation = LOC_VALUE_GPS
-                    getString(R.string.map) -> selectedLocation = LOC_VALUE_MAP
-                }
-                binding.tvSettingsLocationValue.text = selected
-                selectedLocationItem = selected
-                SharedPreferencesSingleton.writeString(KEY_SELECTED_LOCATION, selectedLocation)
-                if (selectedLocation == LOC_VALUE_MAP) {
-                    val navigationAction =
-                        SettingsFragmentDirections.actionNavSettingsToMapsFragment(
-                            MapSelectionType.CURRENT_LOCATION
-                        )
-                    findNavController().navigate(navigationAction)
+                if (checkConnectivity(requireActivity())) {
+                    when (selected) {
+                        getString(R.string.gps) -> selectedLocation = LOC_VALUE_GPS
+                        getString(R.string.map) -> selectedLocation = LOC_VALUE_MAP
+                    }
+                    binding.tvSettingsLocationValue.text = selected
+                    selectedLocationItem = selected
+                    SharedPreferencesSingleton.writeString(KEY_SELECTED_LOCATION, selectedLocation)
+
+                    if (selectedLocation == LOC_VALUE_MAP) {
+                        val navigationAction =
+                            SettingsFragmentDirections.actionNavSettingsToMapsFragment(
+                                MapSelectionType.CURRENT_LOCATION
+                            )
+                        findNavController().navigate(navigationAction)
+                    }
+                }else{
+                    Toast.makeText(requireContext(),"No internet connection",Toast.LENGTH_SHORT).show()
                 }
             }
         }

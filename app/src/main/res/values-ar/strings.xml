@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Weather360</string>
-    <string name="action_settings">الإعدادات</string>
 
     <string name="menu_home">الصفحة الرئيسية</string>
     <string name="menu_favorite">المفضلة</string>
@@ -8,7 +7,6 @@
     <string name="menu_settings">الإعدادات</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">مرحبًا بك في شاشة فارغة</string>
     <string name="cancel">إلغاء</string>
 
     <!-- Settings -->
@@ -31,7 +29,6 @@
     <string name="humidity">الرطوبة</string>
     <string name="cloud">السحب</string>
     <string name="save_location">حفظ الموقع</string>
-    <string name="location_type">نوع الموقع</string>
     <string name="weather_360">الطقس 360</string>
     <string name="alerts">التنبيهات</string>
     <string name="sure">متأكد</string>
@@ -56,4 +53,19 @@
     <string name="metre_s">متر/ثانية</string>
     <string name="meter">متر</string>
     <string name="hpa">هـ.ب</string>
+    <string name="notification">إشعار</string>
+    <string name="alarm">منبه</string>
+    <string name="weather_is_fine">الطقس جيد</string>
+    <string name="no_forecast_data_please_enable_your_internet">لا توجد بيانات توقعات، يرجى تمكين الإنترنت</string>
+    <string name="select_date">حدد التاريخ</string>
+    <string name="select_appointment_time">حدد وقت الموعد</string>
+    <string name="please_allow_display_over_other_apps">يرجى السماح بـ "عرض فوق التطبيقات الأخرى"</string>
+    <string name="loading">جارٍ التحميل</string>
+    <string name="home">الصفحة الرئيسية</string>
+    <string name="please_enable_your_internet_to_retrieve_the_data">يرجى تمكين الإنترنت لاسترداد البيانات</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
+    <string name="please_allow_the_location_permissions_to_get_current_location">يرجى السماح بإذن الموقع للحصول على الموقع الحالي</string>
+    <string name="failed_to_retrieve_data">فشل في استرداد البيانات</string>
+
 </resources>
