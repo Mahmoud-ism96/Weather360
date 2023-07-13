@@ -114,11 +114,30 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
             map.clear()
 
-            val snippet = String.format(
-                Locale.getDefault(), "Lat: %1$.5f, Long: %2$.5f", latLng.latitude, latLng.longitude
+            val language = SharedPreferencesSingleton.readString(
+                CommonUtils.KEY_SELECTED_LANGUAGE, CommonUtils.LANG_VALUE_EN
             )
 
-            countryName = "Unknown"
+            var currentLang = ""
+
+            when (language) {
+                CommonUtils.LANG_VALUE_EN -> {
+                    currentLang = "en"
+                }
+
+                CommonUtils.LANG_VALUE_AR -> {
+                    currentLang = "ar"
+                }
+            }
+
+            val snippet = String.format(
+                Locale(currentLang),
+                getString(R.string.latitude) + "%1$.5f, " + getString(R.string.longitude) + "%2$.5f",
+                latLng.latitude,
+                latLng.longitude
+            )
+
+            countryName = getString(R.string.unknown)
 
             if (checkConnectivity(requireActivity())) {
                 var address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
@@ -126,10 +145,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 if (!address.isNullOrEmpty()) {
                     if (!address[0].adminArea.isNullOrBlank()) countryName =
                         address[0].adminArea + ", "
-                    else countryName = "Unknown, "
+                    else countryName = getString(R.string.unknown)+", "
 
                     if (!address[0].countryName.isNullOrBlank()) countryName += address[0].countryName
-                    else countryName = "Unknown"
+                    else countryName = getString(R.string.unknown)
                 }
             }
             marker = map.addMarker(

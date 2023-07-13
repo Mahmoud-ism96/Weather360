@@ -91,6 +91,10 @@ class HomeFragment : Fragment() {
         if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
             getLastLocation()
         } else {
+            binding.tvRetry.text = getString(R.string.permission_was_rejected)
+            binding.groupLoading.visibility = View.GONE
+            binding.groupRetry.visibility = View.VISIBLE
+            binding.groupData.visibility = View.GONE
             Toast.makeText(
                 requireContext(),
                 getString(R.string.please_allow_the_location_permissions_to_get_current_location),
@@ -203,7 +207,7 @@ class HomeFragment : Fragment() {
                 }
             } else {
                 binding.groupRetry.visibility = View.VISIBLE
-
+                binding.tvRetry.text = getString(R.string.no_internet_connection)
                 Toast.makeText(requireContext(),getString(R.string.failed_to_retrieve_data),Toast.LENGTH_SHORT).show()
             }
         }

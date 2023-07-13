@@ -67,5 +67,9 @@
     <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
     <string name="please_allow_the_location_permissions_to_get_current_location">يرجى السماح بإذن الموقع للحصول على الموقع الحالي</string>
     <string name="failed_to_retrieve_data">فشل في استرداد البيانات</string>
+    <string name="permission_was_rejected">تم رفض الإذن</string>
+    <string name="latitude">"خط العرض: "</string>
+    <string name="longitude">"خط الطول: "</string>
+    <string name="unknown">غير معروف</string>
 
 </resources>
